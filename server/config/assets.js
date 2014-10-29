@@ -40,14 +40,28 @@ var development = {
     ])
 }
 
+var cordova = {
+    js: js.concat([
+        'cordova.js',
+        'cordova_plugins.js',
+        'js/index.js',
+        'js/main.js'
+    ]),
+    css: css.concat([
+        'bower_components/fullscreener/src/jquery.fullscreener.css',
+        'css/styles.css'
+    ])
+}
+
 var production = {
     js: ['js/scripts.min.js'],
     css: ['css/styles.min.css']
 }
 
+
 module.exports = {
     test: development,
     development: development,
     production: production,
-    cordova: development
+    cordova: cordova
 }
