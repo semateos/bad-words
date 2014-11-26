@@ -23,6 +23,11 @@ module.exports = {
             directory: { path: rootPath + '/public/js' }
         }
     },
+    textures: {
+        handler: {
+            directory: { path: rootPath + '/public/textures' }
+        }
+    },
     bower: {
         handler: {
             directory: { path: rootPath + '/public/bower_components' }

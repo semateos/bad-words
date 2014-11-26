@@ -24,6 +24,11 @@ module.exports = [
     },
     {
         method: 'GET',
+        path: '/textures/{path*}',
+        config: controller.textures
+    },
+    {
+        method: 'GET',
         path: '/bower_components/{path*}',
         config: controller.bower
     }
