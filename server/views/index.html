@@ -81,11 +81,11 @@
       scene.add(light);
 
       var texture = THREE.ImageUtils.loadTexture(
-        'textures/patterns/checker.png'
+        'textures/patterns/floor1.jpg'
       );
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat = new THREE.Vector2(50, 50);
+      texture.repeat = new THREE.Vector2(20, 20);
       texture.anisotropy = renderer.getMaxAnisotropy();
 
       var material = new THREE.MeshPhongMaterial({
@@ -96,7 +96,7 @@
         map: texture
       });
 
-      var geometry = new THREE.PlaneGeometry(1000, 1000);
+      var geometry = new THREE.PlaneGeometry(500, 500);
 
       var mesh = new THREE.Mesh(geometry, material);
       mesh.rotation.x = -Math.PI / 2;
