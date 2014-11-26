@@ -1,24 +1,20 @@
-Stimpy Mobile
+Stimpy Cardboard
 =============
 
-[Stimpy](https://github.com/semateos/stimpy) is a simple yet inventive fellow.  This is a boilerplate for Hapi.js backed app that works on the web or as a nativized mobile app.  The idea is to build one application that works as well packaged as a native app as it does on the web.  We're not quite there yet, but getting close.  Contributors welcomed with open arms and buttocks.
+[Stimpy](https://github.com/semateos/stimpy) is a simple yet inventive fellow.  This is a boilerplate for cardboard VR app that is potentially backed by hapi.js.
 
 To install Stimpy:
 ```bash
 $ npm install -g stimpy supervisor bower gulp cordova
 ```
-To start a new Stimpy Mobile project
+To start a new Stimpy Cardboard project
 ```bash
-$ stimpy create mobile my_new_project
+$ stimpy create cardboard my_new_project
 $ cd my_new_project
 ```
 Start the local testing server by running the command:
 ```bash
 $ stimpy start
-```
-To test the ios build:
-```bash
-$ stimpy emulate ios
 ```
 
 ####Device Testing
@@ -36,6 +32,8 @@ Open `cordova/platforms/ios/Stimpy Mobile.xcodeproj` in Xcode.
 Run the project on the attached device following the Apple Developer proceedure for setting up a testing device.
 
 ## The Stack:
+**Three.js** - Because @mrdoob [http://threejs.org/](http://threejs.org/)
+
 **Node.js** - Because it's fast, easy to get started, and Javscript is awesome.
 [http://nodejs.org/](http://nodejs.org/)
 
@@ -69,7 +67,7 @@ Assets are in the `./server/config/assets.js` file, and your view layer has acce
 Client/browser reloads new assets based on package.json version of your application. [https://github.com/poeticninja/hapi-cache-buster](https://github.com/poeticninja/hapi-cache-buster)
 
 #### Folder Structure
-There are two main folders in the stack. The "**public**" folder for front-end (client side) code, and "**server**" folder for server side code.  `index.js` defines the hapi plugin, `server.js` is a sample server using the plugin.
+There are two main folders in the stack. The "**public**" folder for front-end (client side) code, and "**server**" folder for server side code. 
 
 ## Contributers
 
