@@ -1,9 +1,11 @@
 var camera, scene, renderer;
 var effect, controls;
 var element, container;
-var cube;
+var cube, time;
 
-var startTime = Date.now();
+var particleSystem, particles,
+particleSystemHeight = 500,
+particleCount = 2000;
 
 var clock = new THREE.Clock();
 
@@ -21,7 +23,7 @@ function init() {
   scene = new THREE.Scene();
 
   camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
-  camera.position.set(0, 10, 0);
+  camera.position.set(0, 10, 100);
   scene.add(camera);
 
   controls = new THREE.OrbitControls(camera, element);
@@ -72,15 +74,70 @@ function init() {
   var geometry = new THREE.PlaneGeometry(1000, 1000);
 
   var mesh = new THREE.Mesh(geometry, material);
-  mesh.rotation.x = -Math.PI / 2;
-  scene.add(mesh);
 
-  cube = new THREE.Mesh( new THREE.CubeGeometry( 50, 50, 50 ), new THREE.MeshNormalMaterial() );
+  mesh.rotation.x = -Math.PI / 2;
+  
+  //scene.add(mesh);
+
+  var material = new THREE.MeshBasicMaterial( { color: 0xff00ff, wireframe: true } );
+
+  cube = new THREE.Mesh( new THREE.DodecahedronGeometry( 100 ), material );
   cube.position.x = 300;
   cube.position.y = 70;
-  cube.position.z = 100;
+  cube.position.z = 50;
 
   scene.add( cube );
+
+  scene.fog = new THREE.Fog( 0x0000ff, 1, 1000 );
+  scene.autoUpdate = false;
+
+  // create the particle variables
+  
+  particles = new THREE.Geometry();
+
+  pMaterial = new THREE.PointCloudMaterial({
+    color: 0xFF0000,
+    size: 7,
+    map: THREE.ImageUtils.loadTexture(
+      "images/particle.png"
+    ),
+    fog: true, 
+    blending: THREE.AdditiveBlending,
+    transparent: true
+  });
+
+  // now create the individual particles
+  for (var p = 0; p < particleCount; p++) {
+
+    // create a particle with random
+    // position values, -250 -> 250
+    var pX = Math.random() * particleSystemHeight * 2 - particleSystemHeight,
+        pY = Math.random() * particleSystemHeight * 2 - particleSystemHeight,
+        pZ = Math.random() * particleSystemHeight * 2 - particleSystemHeight,
+        particle = new THREE.Vector3(pX, pY, pZ);
+
+        particle.velocity = new THREE.Vector3(
+          0,              // x
+          -Math.random() / 3, // y: random vel
+          0);             // z
+
+    // add it to the geometry
+    particles.vertices.push(particle);
+  }
+
+  // create the particle system
+  particleSystem = new THREE.PointCloud(
+      particles,
+      pMaterial);
+
+  particleSystem.sortParticles = true;
+
+  // add it to the scene
+  scene.add(particleSystem);
+
+  //var text = new THREE.Mesh( new THREE.TextGeometry("Testing", {size: 20, height: 30}), new THREE.MeshNormalMaterial() );
+  //scene.add( text );
+
 
   window.addEventListener('resize', resize, false);
   setTimeout(resize, 1);
@@ -107,14 +164,43 @@ function resize() {
 
     function render(dt) {
 
-      cube.rotation.x += 0.02;
-      cube.rotation.y += 0.0225;
-      cube.rotation.z += 0.0175;
+      time = clock.getElapsedTime();
 
-      var dtime = Date.now() - startTime;
-      cube.scale.x  = 1.0 + 0.3*Math.sin(dtime/300);
-      cube.scale.y  = 1.0 + 0.3*Math.sin(dtime/300);
-      cube.scale.z  = 1.0 + 0.3*Math.sin(dtime/300);
+      cube.rotation.x += 0.02;
+      cube.rotation.y += 0.02;
+      cube.rotation.z += 0.02;
+      cube.position.y  = 100 + 20 * Math.sin(time * 3);
+
+      //particleSystem.rotation.y += 0.01;
+
+      
+      var pCount = particleCount;
+      while (pCount--) {
+
+        // get the particle
+        var particle =
+          particles.vertices[pCount];
+
+        // check if we need to reset
+        if (particle.y < -1 * particleSystemHeight ) {
+          particle.y = particleSystemHeight;
+          particle.velocity.y = 0;
+        }
+
+        // update the velocity with
+        // a splat of randomniz
+        particle.velocity.y -= Math.random() * .05;
+
+        // and the position
+        particle.add(particle.velocity);
+      }
+
+      // flag to the particle system
+      // that we've changed its vertices.
+      particleSystem.
+        geometry.
+        __dirtyVertices = true;
+      
 
       effect.render(scene, camera);
     }
@@ -122,8 +208,10 @@ function resize() {
     function animate(t) {
       requestAnimationFrame(animate);
 
-      update(clock.getDelta());
-      render(clock.getDelta());
+      var dt = clock.getDelta();
+
+      update(dt);
+      render(dt);
     }
 
     function fullscreen() {
