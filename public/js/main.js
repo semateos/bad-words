@@ -13,7 +13,32 @@ init();
 animate();
 
 function init() {
-  renderer = new THREE.WebGLRenderer();
+  
+  var errorCallback = function(e) {
+    console.log('Reeeejected!', e);
+  };
+
+  navigator.getUserMedia  = navigator.getUserMedia ||
+                          navigator.webkitGetUserMedia ||
+                          navigator.mozGetUserMedia ||
+                          navigator.msGetUserMedia;
+
+  var video1 = document.querySelector('video.left');
+  var video2 = document.querySelector('video.right');
+
+  if (navigator.getUserMedia) {
+    navigator.getUserMedia({audio: false, video: true}, function(stream) {
+      video1.src = window.URL.createObjectURL(stream);
+      video2.src = window.URL.createObjectURL(stream);
+    }, errorCallback);
+  } else {
+    //video.src = 'somevideo.webm'; // fallback.
+  }
+
+
+  renderer = new THREE.WebGLRenderer({ alpha: true });
+  renderer.setClearColor( 0x000000, 0 );
+
   element = renderer.domElement;
   container = document.getElementById('example');
   container.appendChild(element);
@@ -52,43 +77,18 @@ function init() {
   window.addEventListener('deviceorientation', setOrientationControls, true);
   
 
-  var light = new THREE.HemisphereLight(0x777777, 0x000000, 0.6);
+  var light = new THREE.HemisphereLight(0xff0000, 0x000000, 1);
   scene.add(light);
 
-  var texture = THREE.ImageUtils.loadTexture(
-    'textures/patterns/floor1.jpg'
-  );
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat = new THREE.Vector2(20, 20);
-  texture.anisotropy = renderer.getMaxAnisotropy();
 
-  var material = new THREE.MeshPhongMaterial({
-    color: 0xffffff,
-    specular: 0xffffff,
-    shininess: 20,
-    shading: THREE.FlatShading,
-    map: texture
-  });
-
-  var geometry = new THREE.PlaneGeometry(1000, 1000);
-
-  var mesh = new THREE.Mesh(geometry, material);
-
-  mesh.rotation.x = -Math.PI / 2;
-  
-  //scene.add(mesh);
-
-  var material = new THREE.MeshBasicMaterial( { color: 0xff00ff, wireframe: true } );
-
-  cube = new THREE.Mesh( new THREE.DodecahedronGeometry( 100 ), material );
+  cube = new THREE.Mesh( new THREE.DodecahedronGeometry( 100 ), new THREE.MeshBasicMaterial( { color: 0xff00ff, wireframe: true } ));
   cube.position.x = 300;
   cube.position.y = 70;
   cube.position.z = 50;
 
   scene.add( cube );
 
-  scene.fog = new THREE.Fog( 0x0000ff, 1, 1000 );
+  //scene.fog = new THREE.Fog( 0x0000ff, 1, 1000 );
   scene.autoUpdate = false;
 
   // create the particle variables
@@ -97,10 +97,8 @@ function init() {
 
   pMaterial = new THREE.PointCloudMaterial({
     color: 0xFF0000,
-    size: 7,
-    map: THREE.ImageUtils.loadTexture(
-      "images/particle.png"
-    ),
+    size: 3,
+    
     fog: true, 
     blending: THREE.AdditiveBlending,
     transparent: true
