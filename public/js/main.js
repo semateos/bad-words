@@ -23,17 +23,47 @@ function init() {
                           navigator.mozGetUserMedia ||
                           navigator.msGetUserMedia;
 
-  var video1 = document.querySelector('video.left');
-  var video2 = document.querySelector('video.right');
+  function gotSources(sourceInfos) {
 
-  if (navigator.getUserMedia) {
-    navigator.getUserMedia({audio: false, video: true}, function(stream) {
-      video1.src = window.URL.createObjectURL(stream);
-      video2.src = window.URL.createObjectURL(stream);
-    }, errorCallback);
-  } else {
-    //video.src = 'somevideo.webm'; // fallback.
+    console.log(sourceInfos);
+
+    //var source = sourceInfos[4]
+
+    var sourceId;
+
+    if(sourceInfos[4]){
+
+      sourceId = sourceInfos[4].id;
+    }
+
+    var constraints = {
+      audio: false,
+      video: {
+        optional: [{sourceId: sourceId}]
+      }
+    }
+
+    var video1 = document.querySelector('video.left');
+    var video2 = document.querySelector('video.right');
+
+    if (navigator.getUserMedia) {
+      navigator.getUserMedia(constraints, function(stream) {
+        video1.src = window.URL.createObjectURL(stream);
+        video2.src = window.URL.createObjectURL(stream);
+      }, errorCallback);
+    } else {
+      //video.src = 'somevideo.webm'; // fallback.
+    }
   }
+
+  if (typeof MediaStreamTrack === 'undefined'){
+    alert('This browser does not support MediaStreamTrack.');
+  } else {
+    MediaStreamTrack.getSources(gotSources);
+  }
+
+
+  
 
 
   renderer = new THREE.WebGLRenderer({ alpha: true });
