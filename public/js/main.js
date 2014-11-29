@@ -14,6 +14,7 @@ animate();
 
 function init() {
   
+  //get camera stuff:
   var errorCallback = function(e) {
     console.log('Reeeejected!', e);
   };
@@ -31,11 +32,13 @@ function init() {
 
     var sourceId;
 
+    //the back facing camera on nexus 5 is the 4th source:
     if(sourceInfos[4]){
 
       sourceId = sourceInfos[4].id;
     }
 
+    //set the constraints for this preference
     var constraints = {
       audio: false,
       video: {
@@ -43,16 +46,16 @@ function init() {
       }
     }
 
+    //video containers for left and right eye
     var video1 = document.querySelector('video.left');
     var video2 = document.querySelector('video.right');
 
+    //set the video source for both eyes to the same video stream:
     if (navigator.getUserMedia) {
       navigator.getUserMedia(constraints, function(stream) {
         video1.src = window.URL.createObjectURL(stream);
         video2.src = window.URL.createObjectURL(stream);
       }, errorCallback);
-    } else {
-      //video.src = 'somevideo.webm'; // fallback.
     }
   }
 
@@ -63,19 +66,21 @@ function init() {
   }
 
 
-  
+  //set up the three.js rendering on top:
 
-
+  // make the three.js background transparent:
   renderer = new THREE.WebGLRenderer({ alpha: true });
   renderer.setClearColor( 0x000000, 0 );
 
+  // create the three container:
   element = renderer.domElement;
   container = document.getElementById('example');
   container.appendChild(element);
 
+  //stereo render effect:
   effect = new THREE.StereoEffect(renderer);
-
   scene = new THREE.Scene();
+
 
   camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
   camera.position.set(0, 10, 100);
@@ -91,7 +96,9 @@ function init() {
   controls.noZoom = true;
   controls.noPan = true;
 
+
   function setOrientationControls(e) {
+
     if (!e.alpha) {
       return;
     }
@@ -100,29 +107,28 @@ function init() {
     controls.connect();
     controls.update();
 
+    //go fullscreen on orientation change (click backup)
+    fullscreen();
     element.addEventListener('click', fullscreen, false);
 
-    window.removeEventListener('deviceorientation', setOrientationControls);
+    //window.removeEventListener('deviceorientation', setOrientationControls);
   }
+
   window.addEventListener('deviceorientation', setOrientationControls, true);
   
-
+  //add light to the scene (this is red light)
   var light = new THREE.HemisphereLight(0xff0000, 0x000000, 1);
   scene.add(light);
 
-
+  //add an object to the scene
   cube = new THREE.Mesh( new THREE.DodecahedronGeometry( 100 ), new THREE.MeshBasicMaterial( { color: 0xff00ff, wireframe: true } ));
   cube.position.x = 300;
   cube.position.y = 70;
   cube.position.z = 50;
-
   scene.add( cube );
 
-  //scene.fog = new THREE.Fog( 0x0000ff, 1, 1000 );
-  scene.autoUpdate = false;
 
   // create the particle variables
-  
   particles = new THREE.Geometry();
 
   pMaterial = new THREE.PointCloudMaterial({
