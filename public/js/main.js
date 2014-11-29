@@ -1,3 +1,7 @@
+
+
+
+//Three.js rendering:
 var camera, scene, renderer;
 var effect, controls;
 var element, container;
@@ -14,7 +18,7 @@ animate();
 
 function init() {
   
-  //get camera stuff:
+  //set up camera stuff:
   var errorCallback = function(e) {
     console.log('Reeeejected!', e);
   };
@@ -27,8 +31,6 @@ function init() {
   function gotSources(sourceInfos) {
 
     console.log(sourceInfos);
-
-    //var source = sourceInfos[4]
 
     var sourceId;
 
@@ -64,10 +66,7 @@ function init() {
   } else {
     MediaStreamTrack.getSources(gotSources);
   }
-
-
-  //set up the three.js rendering on top:
-
+  
   // make the three.js background transparent:
   renderer = new THREE.WebGLRenderer({ alpha: true });
   renderer.setClearColor( 0x000000, 0 );
@@ -81,7 +80,7 @@ function init() {
   effect = new THREE.StereoEffect(renderer);
   scene = new THREE.Scene();
 
-
+  //set up the camera:
   camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
   camera.position.set(0, 10, 100);
   scene.add(camera);
@@ -96,12 +95,10 @@ function init() {
   controls.noZoom = true;
   controls.noPan = true;
 
+  //if mobile device, user device orientation controls:
+  if(window.DeviceOrientationEvent){
 
-  function setOrientationControls(e) {
-
-    if (!e.alpha) {
-      return;
-    }
+    console.log('orientation');
 
     controls = new THREE.DeviceOrientationControls(camera, true);
     controls.connect();
@@ -110,12 +107,10 @@ function init() {
     //go fullscreen on orientation change (click backup)
     fullscreen();
     element.addEventListener('click', fullscreen, false);
-
-    //window.removeEventListener('deviceorientation', setOrientationControls);
   }
 
-  window.addEventListener('deviceorientation', setOrientationControls, true);
   
+
   //add light to the scene (this is red light)
   var light = new THREE.HemisphereLight(0xff0000, 0x000000, 1);
   scene.add(light);
@@ -181,81 +176,81 @@ function resize() {
   var width = container.offsetWidth;
   var height = container.offsetHeight;
 
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
 
-      renderer.setSize(width, height);
-      effect.setSize(width, height);
+  renderer.setSize(width, height);
+  effect.setSize(width, height);
+}
+
+function update(dt) {
+  resize();
+
+  camera.updateProjectionMatrix();
+
+  controls.update(dt);
+}
+
+function render(dt) {
+
+  time = clock.getElapsedTime();
+
+  cube.rotation.x += 0.02;
+  cube.rotation.y += 0.02;
+  cube.rotation.z += 0.02;
+  cube.position.y  = 100 + 20 * Math.sin(time * 3);
+
+  //particleSystem.rotation.y += 0.01;
+
+  
+  var pCount = particleCount;
+  while (pCount--) {
+
+    // get the particle
+    var particle =
+      particles.vertices[pCount];
+
+    // check if we need to reset
+    if (particle.y < -1 * particleSystemHeight ) {
+      particle.y = particleSystemHeight;
+      particle.velocity.y = 0;
     }
 
-    function update(dt) {
-      resize();
+    // update the velocity with
+    // a splat of randomniz
+    particle.velocity.y -= Math.random() * .05;
 
-      camera.updateProjectionMatrix();
+    // and the position
+    particle.add(particle.velocity);
+  }
 
-      controls.update(dt);
-    }
+  // flag to the particle system
+  // that we've changed its vertices.
+  particleSystem.
+    geometry.
+    __dirtyVertices = true;
+  
 
-    function render(dt) {
+  effect.render(scene, camera);
+}
 
-      time = clock.getElapsedTime();
+function animate(t) {
+  requestAnimationFrame(animate);
 
-      cube.rotation.x += 0.02;
-      cube.rotation.y += 0.02;
-      cube.rotation.z += 0.02;
-      cube.position.y  = 100 + 20 * Math.sin(time * 3);
+  var dt = clock.getDelta();
 
-      //particleSystem.rotation.y += 0.01;
+  update(dt);
+  render(dt);
+}
 
-      
-      var pCount = particleCount;
-      while (pCount--) {
-
-        // get the particle
-        var particle =
-          particles.vertices[pCount];
-
-        // check if we need to reset
-        if (particle.y < -1 * particleSystemHeight ) {
-          particle.y = particleSystemHeight;
-          particle.velocity.y = 0;
-        }
-
-        // update the velocity with
-        // a splat of randomniz
-        particle.velocity.y -= Math.random() * .05;
-
-        // and the position
-        particle.add(particle.velocity);
-      }
-
-      // flag to the particle system
-      // that we've changed its vertices.
-      particleSystem.
-        geometry.
-        __dirtyVertices = true;
-      
-
-      effect.render(scene, camera);
-    }
-
-    function animate(t) {
-      requestAnimationFrame(animate);
-
-      var dt = clock.getDelta();
-
-      update(dt);
-      render(dt);
-    }
-
-    function fullscreen() {
-      if (document.body.requestFullscreen) {
-        document.body.requestFullscreen();
-      } else if (document.body.msRequestFullscreen) {
-        document.body.msRequestFullscreen();
-      } else if (document.body.mozRequestFullScreen) {
-        document.body.mozRequestFullScreen();
-      } else if (document.body.webkitRequestFullscreen) {
-        document.body.webkitRequestFullscreen();
-      }
-    }
+function fullscreen() {
+  if (document.body.requestFullscreen) {
+    document.body.requestFullscreen();
+  } else if (document.body.msRequestFullscreen) {
+    document.body.msRequestFullscreen();
+  } else if (document.body.mozRequestFullScreen) {
+    document.body.mozRequestFullScreen();
+  } else if (document.body.webkitRequestFullscreen) {
+    document.body.webkitRequestFullscreen();
+  }
+}
