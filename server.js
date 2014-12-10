@@ -21,6 +21,19 @@ plugins = plugins.concat([
             }
         }
     },
+    {
+        plugin: require('hapi-socket'),
+        options: {
+            messageHandler: function (socket) {
+
+                return function (message) {
+                    console.log("Message sent!", message);
+                    socket.broadcast.emit('message', message);
+                };
+            },
+            logLevel: 3
+        }
+    },
 	{ 
 		plugin: require("./index")
 	}

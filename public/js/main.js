@@ -13,8 +13,36 @@ particleCount = 2000;
 
 var clock = new THREE.Clock();
 
+var socket = io();
+
 init();
 animate();
+
+function socket_send(message){
+
+  socket.emit('message', message);
+
+}
+
+socket.on('message', function(msg){
+
+  console.log(msg);
+
+});
+
+window.onkeydown = function(e) {
+  
+   var key = e.keyCode ? e.keyCode : e.which;
+
+   socket_send({'event': 'keydown', 'key': key});
+}
+
+window.onkeyup = function(e) {
+  
+   var key = e.keyCode ? e.keyCode : e.which;
+
+   socket_send({'event': 'keyup', 'key': key});
+}
 
 function init() {
   
@@ -66,7 +94,7 @@ function init() {
   } else {
     MediaStreamTrack.getSources(gotSources);
   }
-  
+
   // make the three.js background transparent:
   renderer = new THREE.WebGLRenderer({ alpha: true });
   renderer.setClearColor( 0x000000, 0 );
