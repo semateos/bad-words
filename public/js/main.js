@@ -18,31 +18,77 @@ var socket = io();
 init();
 animate();
 
-function socket_send(message){
+function socketSend(message){
 
   socket.emit('message', message);
 
 }
 
-socket.on('message', function(msg){
+var camera_y, camera_x;
 
-  console.log(msg);
+function handleKey(keyevent){
+
+  //console.log(keyevent);
+
+  if(keyevent.event == 'keydown'){
+
+    switch(keyevent.key){
+
+      case 87: //w key
+
+        //console.log('forward');
+        camera_y = camera.position.y - 50;
+        break;
+
+      case 83: //s key
+
+        //console.log('back');
+        camera_y = camera.position.y + 50;
+        break;
+
+      case 65: //a key
+
+        //console.log('left');
+        camera_x = camera.position.x - 50;
+        break;
+
+      case 68: //d key
+
+        //console.log('right');
+        camera_x = camera.position.x + 50;
+        break;
+    }
+  }
+}
+
+socket.on('message', function(keyevent){
+
+  handleKey(keyevent);
 
 });
+
 
 window.onkeydown = function(e) {
   
    var key = e.keyCode ? e.keyCode : e.which;
 
-   socket_send({'event': 'keydown', 'key': key});
+   var keyevent = {'event': 'keydown', 'key': key};
+
+   handleKey(keyevent);
+   socketSend(keyevent);
 }
 
+/*
 window.onkeyup = function(e) {
   
    var key = e.keyCode ? e.keyCode : e.which;
 
-   socket_send({'event': 'keyup', 'key': key});
+   var keyevent = {'event': 'keyup', 'key': key};
+
+   handleKey(keyevent);
+   socketSend(keyevent);
 }
+*/
 
 function init() {
   
@@ -113,6 +159,9 @@ function init() {
   camera.position.set(0, 10, 100);
   scene.add(camera);
 
+  camera_y = camera.position.y;
+  camera_x = camera.position.x;
+
   controls = new THREE.OrbitControls(camera, element);
   controls.rotateUp(Math.PI / 4);
   controls.target.set(
@@ -126,17 +175,17 @@ function init() {
   //if mobile device, user device orientation controls:
   if(window.DeviceOrientationEvent){
 
-    console.log('orientation');
+    //console.log('orientation');
 
     controls = new THREE.DeviceOrientationControls(camera, true);
     controls.connect();
     controls.update();
-
-    //go fullscreen on orientation change (click backup)
-    fullscreen();
-    element.addEventListener('click', fullscreen, false);
+    
+    //element.addEventListener('click', fullscreen, false);
   }
 
+  var full_button = document.getElementById('fullscreen');
+  full_button.addEventListener('click', fullscreen, false);
   
 
   //add light to the scene (this is red light)
@@ -230,7 +279,11 @@ function render(dt) {
 
   //particleSystem.rotation.y += 0.01;
 
-  
+  //update camera
+  camera.position.y = camera_y;
+  camera.position.x = camera_x;
+  camera.updateProjectionMatrix();
+
   var pCount = particleCount;
   while (pCount--) {
 
