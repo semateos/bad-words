@@ -1,5 +1,5 @@
 
-
+// debugger
 
 //Three.js rendering:
 var camera, scene, renderer;
@@ -15,6 +15,10 @@ var clock = new THREE.Clock();
 
 var socket = io();
 
+
+var KEYDOWN = false;
+var WHICHKEY = undefined;
+
 init();
 animate();
 
@@ -26,69 +30,74 @@ function socketSend(message){
 
 var camera_y, camera_x;
 
-function handleKey(keyevent){
+function handleKey(WHICHKEY){
 
   //console.log(keyevent);
 
-  if(keyevent.event == 'keydown'){
+  switch(WHICHKEY){
 
-    switch(keyevent.key){
+    case 87: //w key
 
-      case 87: //w key
+      //console.log('forward');
+      camera_y = camera.position.y - 50;
+      break;
 
-        //console.log('forward');
-        camera_y = camera.position.y - 50;
-        break;
+    case 83: //s key
 
-      case 83: //s key
+      //console.log('back');
+      camera_y = camera.position.y + 50;
+      break;
 
-        //console.log('back');
-        camera_y = camera.position.y + 50;
-        break;
+    case 65: //a key
 
-      case 65: //a key
+      //console.log('left');
+      camera_x = camera.position.x - 50;
+      break;
 
-        //console.log('left');
-        camera_x = camera.position.x - 50;
-        break;
+    case 68: //d key
 
-      case 68: //d key
-
-        //console.log('right');
-        camera_x = camera.position.x + 50;
-        break;
-    }
+      //console.log('right');
+      camera_x = camera.position.x + 50;
+      break;
   }
 }
 
 socket.on('message', function(keyevent){
 
-  handleKey(keyevent);
+  console.log(keyevent);
+
+  handleKey(keyevent.key);
 
 });
 
 
+
+
 window.onkeydown = function(e) {
   
-   var key = e.keyCode ? e.keyCode : e.which;
-
-   var keyevent = {'event': 'keydown', 'key': key};
-
-   handleKey(keyevent);
-   socketSend(keyevent);
+  KEYDOWN = true;
+  
+  WHICHKEY = e.keyCode ? e.keyCode : e.which;
 }
 
-/*
+function doKeyDOWN() {
+  
+  // debugger
+  var key = WHICHKEY ? WHICHKEY : WHICHKEY;
+
+  var keyevent = {'event': 'keydown', 'key': key};
+
+  handleKey(WHICHKEY);
+
+  socketSend(keyevent);
+}
+
+
 window.onkeyup = function(e) {
   
-   var key = e.keyCode ? e.keyCode : e.which;
-
-   var keyevent = {'event': 'keyup', 'key': key};
-
-   handleKey(keyevent);
-   socketSend(keyevent);
+  KEYDOWN = false;
 }
-*/
+
 
 function init() {
   
@@ -154,6 +163,12 @@ function init() {
   effect = new THREE.StereoEffect(renderer);
   scene = new THREE.Scene();
 
+  // add saved trixel viewer
+  Trixelworld = new THREE.Object3D();
+  scene.add( Trixelworld );
+
+  buildTrixelDisplay(Trixelworld,scene);
+
   //set up the camera:
   camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
   camera.position.set(0, 10, 100);
@@ -197,7 +212,7 @@ function init() {
   cube.position.x = 300;
   cube.position.y = 70;
   cube.position.z = 50;
-  scene.add( cube );
+  //scene.add( cube );
 
 
   // create the particle variables
@@ -272,18 +287,26 @@ function render(dt) {
 
   time = clock.getElapsedTime();
 
+
   cube.rotation.x += 0.02;
   cube.rotation.y += 0.02;
   cube.rotation.z += 0.02;
   cube.position.y  = 100 + 20 * Math.sin(time * 3);
 
   //particleSystem.rotation.y += 0.01;
-
+  if (KEYDOWN) {
+    doKeyDOWN();
+  };
   //update camera
   camera.position.y = camera_y;
   camera.position.x = camera_x;
   camera.updateProjectionMatrix();
 
+  
+  // simple billboard method
+  Trixelworld.quaternion.copy( camera.quaternion );
+
+  
   var pCount = particleCount;
   while (pCount--) {
 
@@ -314,6 +337,7 @@ function render(dt) {
 
   effect.render(scene, camera);
 }
+
 
 function animate(t) {
   requestAnimationFrame(animate);
