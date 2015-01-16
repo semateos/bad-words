@@ -15,12 +15,37 @@ var clock = new THREE.Clock();
 
 var socket = io();
 
-
 var KEYDOWN = false;
 var WHICHKEY = undefined;
+var trixelData = undefined;
 
-init();
-animate();
+var request = new XMLHttpRequest();
+request.open('GET', 'http://api.trixel.io/trixels/26', true);
+
+request.onload = function() {
+  if (this.status >= 200 && this.status < 400) {
+    // Success!
+    trixelData = JSON.parse(this.response);
+
+    console.log('trixel data', trixelData);
+
+    init();
+    animate();
+
+  } else {
+    console.error('json load error');
+
+  }
+};
+
+request.onerror = function() {
+  console.error('json request error');
+};
+
+request.send();
+
+
+
 
 function socketSend(message){
 
@@ -39,25 +64,25 @@ function handleKey(WHICHKEY){
     case 87: //w key
 
       //console.log('forward');
-      camera_y = camera.position.y - 50;
+      camera_y = camera.position.y - 10;
       break;
 
     case 83: //s key
 
       //console.log('back');
-      camera_y = camera.position.y + 50;
+      camera_y = camera.position.y + 10;
       break;
 
     case 65: //a key
 
       //console.log('left');
-      camera_x = camera.position.x - 50;
+      camera_x = camera.position.x - 10;
       break;
 
     case 68: //d key
 
       //console.log('right');
-      camera_x = camera.position.x + 50;
+      camera_x = camera.position.x + 10;
       break;
   }
 }
@@ -167,7 +192,7 @@ function init() {
   Trixelworld = new THREE.Object3D();
   scene.add( Trixelworld );
 
-  buildTrixelDisplay(Trixelworld,scene);
+  buildTrixelDisplay(Trixelworld,scene,trixelData.data);
 
   //set up the camera:
   camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);

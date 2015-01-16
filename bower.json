@@ -18,6 +18,7 @@
   "dependencies": {
     "jquery": "~2.1.1",
     "fullscreener": "~1.0.1",
-    "three.js": "*"
+    "three.js": "*",
+    "fermata": "~0.10.1"
   }
 }
