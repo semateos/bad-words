@@ -1,6 +1,6 @@
 console.log('cosmos');
 
-function buildTrixelDisplay (world,scene,data) {
+function buildTrixelDisplay (world,scene) {
 // debugger
 	// from included file
 	// var color = Math.random() * 0xffffff;

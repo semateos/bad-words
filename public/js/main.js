@@ -19,6 +19,7 @@ var KEYDOWN = false;
 var WHICHKEY = undefined;
 var trixelData = undefined;
 
+/*
 var request = new XMLHttpRequest();
 request.open('GET', 'http://api.trixel.io/trixels/26', true);
 
@@ -29,8 +30,7 @@ request.onload = function() {
 
     console.log('trixel data', trixelData);
 
-    init();
-    animate();
+    
 
   } else {
     console.error('json load error');
@@ -43,7 +43,10 @@ request.onerror = function() {
 };
 
 request.send();
+*/
 
+init();
+animate();
 
 
 
@@ -192,7 +195,7 @@ function init() {
   Trixelworld = new THREE.Object3D();
   scene.add( Trixelworld );
 
-  buildTrixelDisplay(Trixelworld,scene,trixelData.data);
+  buildTrixelDisplay(Trixelworld,scene);
 
   //set up the camera:
   camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
