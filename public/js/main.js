@@ -13,8 +13,6 @@ particleCount = 2000;
 
 var clock = new THREE.Clock();
 
-var socket = io();
-
 var KEYDOWN = false;
 var WHICHKEY = undefined;
 var trixelData = undefined;
@@ -45,6 +43,35 @@ request.onerror = function() {
 request.send();
 */
 
+//web socket stuff
+
+var socket = io();
+
+function socketSend(message){
+
+  socket.emit('message', message);
+
+}
+
+socket.on('message', function(message){
+
+  console.log(message);
+
+  if(message.event == 'keydown'){
+
+    handleKey(message.key);
+  }
+
+  if(message.event == 'chat'){
+
+    console.log('chat:', message.body);
+    $console.text(message.body);
+
+  }
+
+});
+
+
 //speach recognition controls:
 
 var $console = $('.console');
@@ -59,6 +86,9 @@ var greeting = function(term) {
 
   console.log('say:', term);
   $console.text(term);
+
+  socketSend({event: 'chat', body: term});
+
 }
 
 var commands = {
@@ -121,19 +151,7 @@ function handleKey(WHICHKEY){
   }
 }
 
-function socketSend(message){
 
-  socket.emit('message', message);
-
-}
-
-socket.on('message', function(keyevent){
-
-  console.log(keyevent);
-
-  handleKey(keyevent.key);
-
-});
 
 window.onkeydown = function(e) {
   
@@ -202,7 +220,7 @@ function init() {
         video1.src = window.URL.createObjectURL(stream);
         video2.src = window.URL.createObjectURL(stream);
 
-        //annyang.start();
+        annyang.start();
 
       }, errorCallback);
     }
