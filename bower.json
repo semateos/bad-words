@@ -19,6 +19,7 @@
     "jquery": "~2.1.1",
     "fullscreener": "~1.0.1",
     "three.js": "*",
-    "fermata": "~0.10.1"
+    "fermata": "~0.10.1",
+    "annyang": "git@github.com:TalAter/annyang.git#~1.5.0"
   }
 }

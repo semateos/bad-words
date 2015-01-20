@@ -13,22 +13,43 @@ body {
   z-index: 10;
 }
 
-video {
+video{
+  z-index: 1;
+}
+
+.left{
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
   width: 50%;
-  z-index: 1;
 }
 
-video.right {
+.right {
   position: absolute;
   top: 0;
   left: 50%;
   height: 100%;
   width: 50%;
-  z-index: 2;
+}
+
+.console{
+  box-sizing: border-box;
+  padding: 100px 100px 30px 100px;
+  z-index: 10;
+  color: white;
+  font-family: monospace;
+  font-weight: 200;
+  font-size: 18px;
+  text-align: center;
+}
+
+.console.left{
+  padding-left: 110px;
+}
+
+.console.right{
+  padding-right: 110px;
 }
 
 button{

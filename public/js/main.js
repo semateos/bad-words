@@ -45,16 +45,46 @@ request.onerror = function() {
 request.send();
 */
 
+//speach recognition controls:
+
+var $console = $('.console');
+
+var show = function(term) {
+
+  var url = 'http://api.flickr.com/services/rest/?tags='+term;
+  console.log($.getJSON(url));
+}
+
+var greeting = function(term) {
+
+  console.log('say:', term);
+  $console.text(term);
+}
+
+var commands = {
+  // annyang will capture anything after a splat (*) and pass it to the function.
+  // e.g. saying "Show me Batman and Robin" is the same as calling showFlickr('Batman and Robin');
+  'show *term': show,
+
+  // By defining a part of the following command as optional, annyang will respond to both:
+  // "say hello to my little friend" as well as "say hello friend"
+  'say *term': greeting
+};
+
+
+
+// Add our commands to annyang
+annyang.addCommands(commands);
+
+// Start listening. You can call this here, or attach this call to an event, button, etc.
+annyang.start();
+
+//start three.js stuff
 init();
 animate();
 
 
-
-function socketSend(message){
-
-  socket.emit('message', message);
-
-}
+//socket-based remote keyboard control
 
 var camera_y, camera_x;
 
@@ -90,6 +120,12 @@ function handleKey(WHICHKEY){
   }
 }
 
+function socketSend(message){
+
+  socket.emit('message', message);
+
+}
+
 socket.on('message', function(keyevent){
 
   console.log(keyevent);
@@ -97,9 +133,6 @@ socket.on('message', function(keyevent){
   handleKey(keyevent.key);
 
 });
-
-
-
 
 window.onkeydown = function(e) {
   
@@ -119,7 +152,6 @@ function doKeyDOWN() {
 
   socketSend(keyevent);
 }
-
 
 window.onkeyup = function(e) {
   
@@ -168,6 +200,9 @@ function init() {
       navigator.getUserMedia(constraints, function(stream) {
         video1.src = window.URL.createObjectURL(stream);
         video2.src = window.URL.createObjectURL(stream);
+
+        //annyang.start();
+
       }, errorCallback);
     }
   }
@@ -175,7 +210,7 @@ function init() {
   if (typeof MediaStreamTrack === 'undefined'){
     alert('This browser does not support MediaStreamTrack.');
   } else {
-    MediaStreamTrack.getSources(gotSources);
+    //MediaStreamTrack.getSources(gotSources);
   }
 
   // make the three.js background transparent:
@@ -240,9 +275,10 @@ function init() {
   cube.position.x = 300;
   cube.position.y = 70;
   cube.position.z = 50;
-  //scene.add( cube );
+  scene.add( cube );
 
 
+  /*
   // create the particle variables
   particles = new THREE.Geometry();
 
@@ -283,6 +319,7 @@ function init() {
 
   // add it to the scene
   scene.add(particleSystem);
+  */
 
   //var text = new THREE.Mesh( new THREE.TextGeometry("Testing", {size: 20, height: 30}), new THREE.MeshNormalMaterial() );
   //scene.add( text );
@@ -334,7 +371,7 @@ function render(dt) {
   // simple billboard method
   Trixelworld.quaternion.copy( camera.quaternion );
 
-  
+  /*
   var pCount = particleCount;
   while (pCount--) {
 
@@ -361,7 +398,7 @@ function render(dt) {
   particleSystem.
     geometry.
     __dirtyVertices = true;
-  
+  */
 
   effect.render(scene, camera);
 }
