@@ -83,6 +83,7 @@ annyang.start();
 init();
 animate();
 
+//fullscreen();
 
 //socket-based remote keyboard control
 
@@ -210,7 +211,7 @@ function init() {
   if (typeof MediaStreamTrack === 'undefined'){
     alert('This browser does not support MediaStreamTrack.');
   } else {
-    //MediaStreamTrack.getSources(gotSources);
+    MediaStreamTrack.getSources(gotSources);
   }
 
   // make the three.js background transparent:
@@ -423,4 +424,7 @@ function fullscreen() {
   } else if (document.body.webkitRequestFullscreen) {
     document.body.webkitRequestFullscreen();
   }
+
+  //annyang.start();
+
 }
