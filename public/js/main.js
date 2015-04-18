@@ -87,7 +87,7 @@ var greeting = function(term) {
   console.log('say:', term);
   $console.text(term);
 
-  //socketSend({event: 'chat', body: term});
+  socketSend({event: 'chat', body: term});
 
 }
 
@@ -96,7 +96,7 @@ var test = function() {
   console.log('blah');
   $console.text('blah');
 
-  //socketSend({event: 'chat', body: term});
+  socketSend({event: 'chat', body: 'blah'});
 
 }
 
