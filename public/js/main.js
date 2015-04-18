@@ -89,14 +89,32 @@ var greeting = function(term) {
 
   socketSend({event: 'chat', body: term});
 
+  //annyang.start({ autoRestart: false, continuous: false });
 }
 
 var test = function() {
 
-  console.log('blah');
-  $console.text('blah');
+  console.log('test');
+  $console.text('test');
 
-  socketSend({event: 'chat', body: 'blah'});
+  socketSend({event: 'chat', body: 'test'});
+}
+
+var hello = function() {
+
+  console.log('hello');
+  $console.text('hello');
+
+  socketSend({event: 'chat', body: 'hello'});
+
+}
+
+var banana = function() {
+
+  console.log('banana');
+  $console.text('banana');
+
+  socketSend({event: 'chat', body: 'banana'});
 
 }
 
@@ -104,9 +122,13 @@ var commands = {
 
   'test': test,
 
+  'hello': hello,
+
+  'banana': banana
+
   // By defining a part of the following command as optional, annyang will respond to both:
   // "say hello to my little friend" as well as "say hello friend"
-  'say *term': greeting
+  //'say *term': greeting
 };
 
 
@@ -116,16 +138,12 @@ annyang.addCommands(commands);
 
 annyang.debug();
 
-annyang.addCallback('resultMatch', function (e) {
-  console.log('resultMatch:', e);
-});
-
 // Start listening. You can call this here, or attach this call to an event, button, etc.
-annyang.start();
+annyang.start({ autoRestart: true });
 
 //start three.js stuff
-//init();
-//animate();
+init();
+animate();
 
 //fullscreen();
 
@@ -234,7 +252,7 @@ function init() {
         video1.src = window.URL.createObjectURL(stream);
         video2.src = window.URL.createObjectURL(stream);
 
-        annyang.start();
+        //annyang.start();
 
       }, errorCallback);
     }
@@ -263,7 +281,7 @@ function init() {
   Trixelworld = new THREE.Object3D();
   //scene.add( Trixelworld );
 
-  buildTrixelDisplay(Trixelworld,scene);
+  //buildTrixelDisplay(Trixelworld,scene);
 
   //set up the camera:
   camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
@@ -311,7 +329,6 @@ function init() {
   scene.add( cube );
 
 
-  /*
   // create the particle variables
   particles = new THREE.Geometry();
 
@@ -352,7 +369,6 @@ function init() {
 
   // add it to the scene
   scene.add(particleSystem);
-  */
 
   //var text = new THREE.Mesh( new THREE.TextGeometry("Testing", {size: 20, height: 30}), new THREE.MeshNormalMaterial() );
   //scene.add( text );
@@ -402,9 +418,9 @@ function render(dt) {
 
   
   // simple billboard method
-  Trixelworld.quaternion.copy( camera.quaternion );
+  //Trixelworld.quaternion.copy( camera.quaternion );
 
-  /*
+  
   var pCount = particleCount;
   while (pCount--) {
 
@@ -431,7 +447,7 @@ function render(dt) {
   particleSystem.
     geometry.
     __dirtyVertices = true;
-  */
+  
 
   effect.render(scene, camera);
 }
