@@ -87,14 +87,22 @@ var greeting = function(term) {
   console.log('say:', term);
   $console.text(term);
 
-  socketSend({event: 'chat', body: term});
+  //socketSend({event: 'chat', body: term});
+
+}
+
+var test = function() {
+
+  console.log('blah');
+  $console.text('blah');
+
+  //socketSend({event: 'chat', body: term});
 
 }
 
 var commands = {
-  // annyang will capture anything after a splat (*) and pass it to the function.
-  // e.g. saying "Show me Batman and Robin" is the same as calling showFlickr('Batman and Robin');
-  'show *term': show,
+
+  'test': test,
 
   // By defining a part of the following command as optional, annyang will respond to both:
   // "say hello to my little friend" as well as "say hello friend"
@@ -106,12 +114,18 @@ var commands = {
 // Add our commands to annyang
 annyang.addCommands(commands);
 
+annyang.debug();
+
+annyang.addCallback('resultMatch', function (e) {
+  console.log('resultMatch:', e);
+});
+
 // Start listening. You can call this here, or attach this call to an event, button, etc.
 annyang.start();
 
 //start three.js stuff
-init();
-animate();
+//init();
+//animate();
 
 //fullscreen();
 
@@ -247,7 +261,7 @@ function init() {
 
   // add saved trixel viewer
   Trixelworld = new THREE.Object3D();
-  scene.add( Trixelworld );
+  //scene.add( Trixelworld );
 
   buildTrixelDisplay(Trixelworld,scene);
 
