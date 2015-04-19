@@ -2,17 +2,19 @@
 var socket = io();
 
 var words = [
-    {word:"word1", action:"bomb"},
-    {word:"word2", action:"bomb"},
-    {word:"word3", action:"bomb"},
-    {word:"word4", action:"bomb"},
-    {word:"word5", action:"bomb"},
-    {word:"word6", action:"bomb"},
-    {word:"word7", action:"bomb"},
-    {word:"word8", action:"bomb"},
-    {word:"word9", action:"bomb"},
-    {word:"word10", action:"+3"},
-    {word:"word11", action:"+2"}
+    {word:"supercalifragilisticexpialidocious", action:"bomb"},
+    {word:"silly", action:"bomb"},
+    {word:"penis", action:"bomb"},
+    {word:"nipple", action:"bomb"},
+    {word:"shocker", action:"bomb"},
+    {word:"dildo", action:"bomb"},
+    {word:"socket", action:"bomb"},
+    {word:"pickle", action:"bomb"},
+    {word:"stank", action:"bomb"},
+    {word:"twat", action:"bomb"},
+    {word:"snatch", action:"bomb"},
+    {word:"thong", action:"+3"},
+    {word:"spank", action:"+2"}
 ];
 
 var gifBombs = [
@@ -45,10 +47,13 @@ var me;
 init();
 
 function init() {
-    
     // voice recognition
-    var commandWord = "whatever";
-    annyang.addCommands({commandWord: function(){alert("whatever!");}});
+    annyang.start({ autoRestart: true });
+    
+    for(var i=0; i<words.length; i++) {
+        var word = words[i].word
+        annyang.addCommands({[word]: function(){alert("word matched!");}});
+    }
     
     var greeting = function(term) {
         console.log('say:', term);
@@ -56,24 +61,19 @@ function init() {
         socketSend({event: 'chat', body: term});
     }
     
-    //$console.text(term);
-    
-    //socketSend({event: 'chat', body: term});
-    
-    //annyang.start({ autoRestart: false, continuous: false });
     var commands = {
       // By defining a part of the following command as optional, annyang will respond to both:
       // "say hello to my little friend" as well as "say hello friend"
       'say *term': greeting
     };
-
+    
     // Add our commands to annyang
-    annyang.addCommands(commands);
+    
     annyang.debug();
+    
     // Start listening. You can call this here, or attach this call to an event, button, etc.
-    annyang.start({ autoRestart: true });
-    annyang.addCommands({"hello": function(){alert("hi!");}});
-    annyang.addCommands({"monkey": function(){alert("goodbye!");}});
+    annyang.addCommands(commands);
+    //annyang.start({ autoRestart: false, continuous: false });
 }
 
 
@@ -84,8 +84,6 @@ function socketSend(message){
 }
 
 socket.on('message', function(message){
-    alert("message received:" + message.body);
-  console.log(message);
     switch(message.event) {
     case "chat":
         console.log("word received thru socket: " + message.body);
@@ -98,10 +96,10 @@ socket.on('message', function(message){
     break;
     case "gifBomb":
         if(message.body.target == "all") {
-            receiveGifBomb(message.body); // would be a gifName
+            receiveGifBomb(message.body.gifName); // would be a gifName
         } else {
             if (me == getPlayerByName(message.body.target)){
-                receiveGifBomb(message.body); // would be a gifName
+                receiveGifBomb(message.body.gifName); // would be a gifName
             }
         }
     break;
@@ -131,9 +129,7 @@ function sendGifBomb(gifName, target) {
     var gifBomb = getGifBombByName(gifName);
 
     // socket code
-    if(target == "all") {
-
-    }
+    socketSend({event: 'gifBomb', body: {target: target, gifName: gifName}});
 }
 
 function receiveGifBomb(gifName) {
