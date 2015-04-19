@@ -29,7 +29,7 @@ var gifBombs = [
     {name:"recursiveSmiley", src:"images/recursive-smiley.gif"},
     {name:"rickRoll", src:"images/rick-roll.gif"},
     {name:"ronaldSmack", src:"images/ronald-smack.gif"},
-    {name:"sloMoFace", src:"images/sloMoFace.gif"},
+    {name:"sloMoFace", src:"images/slo-mo-face.gif"},
     {name:"stimpyButton", src:"images/stimpy-button.gif"},
     {name:"trippyMan", src:"images/trippy-man.gif"}
 ];
