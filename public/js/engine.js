@@ -34,30 +34,34 @@ var gifBombs = [
 ];
 
 var players = [
-    {name:"doofus", avatar:"img/doofus.png"},
-    {name:"doggy", avatar:"img/doggy.png"},
-    {name:"cat", avatar:"img/cat.png"}
+    {name:"Sam", avatar:"images/avatar-kramer.png", score:10, rank:1},
+    {name:"Drew", avatar:"images/avatar-michael.png", score:20, rank:2},
+    {name:"Bill", avatar:"images/avatar-peter.png", score:30, rank:3}
 ];
 
 var colors = [
-    {name:"red", hex:""},
     {name:"pink", hex:""},
     {name:"green", hex:""},
     {name:"blue", hex:""},
     {name:"purple", hex:""},
-    {name:"yellow", hex:""},
+    {name:"yellow", hex:""}
 ];
 
 var crosshairsTarget = "";
 var collectedGifBombs = [];
 var currentPlayerTarget = null;
-var numPoints = 0;
+var playerScore = 0;
 var me;
 
 init();
 
 function init() {
     start_voice();
+    for(var i=0; i<players.length; i++) {
+        addPlayerToScoreboard(players[i]);
+    }
+    me = getPlayerByName("Bill");
+    updateScoreboard(true);
 }
 
 function start_voice() {
@@ -120,7 +124,7 @@ function performWordAction(word) {
                 break;
 
             case "addPoints":
-                addPoints(word.action.numPoints);
+                setScore("add", word.action.numPoints);
                 break;
         }
     }
@@ -138,7 +142,10 @@ socket.on('message', function(message){
         console.log("word received thru socket: " + message.body);
     break;
     case "setPlayer":
-        me = getPlayerByName(message.body).name;
+        me = getPlayerByName(message.body);
+    break;
+    case "playerScoreUpdate":
+        
     break;
     case "removeCommand":
         removeCommand(message.body); // would be a commandName
@@ -155,6 +162,68 @@ socket.on('message', function(message){
     }
 });
 
+// ui functions
+
+function setScore(method, num) {
+    if(method == "add"){
+        me.score += num
+    } else if(method == "subtract"){
+        me.score -= num
+    }
+    
+    updateScoreboard();
+    
+    socketSend({event: 'playerScoreUpdate', body: {player: me, score: me.score}});
+}
+
+function addPlayerToScoreboard(player) {
+    $("#scoreboard").append("<div class='scoreboardPlayer'>"
+                            +"<img class='scoreboardPlayerAvatar' src='"+ player.avatar +"'/>"
+                            +"<div class='scoreboardPlayerName'>"+ player.name +"</div>"
+                            +"<div class='scoreboardPlayerScore'>0</div>"
+                            +"</div>"
+                           )}
+
+function updateScoreboard(appStart) {
+    for(var i=0; i<players.length; i++) {
+        var $playerScoreInScoreboard = getPlayerScoreElementInScoreboardByName(players[i].name);
+        if($playerScoreInScoreboard){
+            if(parseInt($playerScoreInScoreboard.html()) != players[i].score){
+                $playerScoreInScoreboard.html(players[i].score);
+            }
+        }
+    }
+    
+    var flagAnimateUpdateScoreboard = false;
+    var playerRankingsBeforeSorting = players;
+    
+    players.sort(function(player1, player2) {
+        // Ascending: first score less than the previous
+        return player2.score - player1.score;
+    });
+    
+    for(var i=0; i<players.length; i++) {
+        players[i].rank = (i+1);
+    }
+    
+    if(playerRankingsBeforeSorting != players) {
+        flagAnimateUpdateScoreboard = true;
+    }
+    
+    // alert(JSON.stringify(players));
+    
+    if(typeof appStart == "undefined"){
+        appStart = false;
+    }
+    if(flagAnimateUpdateScoreboard || appStart) {
+        for(var i=0; i<players.length; i++) {
+            var singlePlayerHeight = $("#scoreboard").children().eq(0).height() + 10; // +10 for padding
+            getPlayerInScoreboardByName(players[i].name).animate({
+                top: (singlePlayerHeight * i - 1)
+            }, 800);
+        }
+    }
+}
 
 // game functions
 
@@ -200,12 +269,6 @@ function sendGifBomb(gifName, target) {
     console.log("you don't have the gifBomb '" + gifName + "'!");
 }
 
-function addPoints(numPts) {
-    numPoints += numPts;
-    alert("add " + numPts + " points!");
-    // update ui
-}
-
 function receiveGifBomb(gifName, fromPlayer) {
     var gifBomb = getGifBombByName(gifName);
     document.getElementById("gifBomb").style.display = "block";
@@ -218,12 +281,32 @@ function receiveGifBomb(gifName, fromPlayer) {
     // also display who sent it
 }
 
-////////////////////////////
+///////////////////////
 // util functions
+///////////////////////
+
 function getGifBombByName(gifName) {
     for(var i=0; i<gifBombs.length; i++) {
         if(gifName == gifBombs[i].name) {
             return gifBombs[i];
+        }
+    }
+}
+
+function getPlayerScoreElementInScoreboardByName(playerName) {
+    for(var i=0; i<$("#scoreboard").children().length; i++) {
+        var childAtIndex = $("#scoreboard").children().eq(i);
+        if(playerName == childAtIndex.find(".scoreboardPlayerName").html()) {
+            return childAtIndex.find(".scoreboardPlayerScore");
+        }
+    }
+}
+
+function getPlayerInScoreboardByName(playerName) {
+    for(var i=0; i<$("#scoreboard").children().length; i++) {
+        var childAtIndex = $("#scoreboard").children().eq(i);
+        if(playerName == childAtIndex.find(".scoreboardPlayerName").html()) {
+            return childAtIndex;
         }
     }
 }
