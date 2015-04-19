@@ -159,16 +159,18 @@ function nothingInCrosshairs() {
 function addGifBombToArsenal(gifName) {
     var gifBomb = getGifBombByName(gifName);
     collectedGifBombs.push(gifBomb);
-    addCommand(gifBomb.name, function(){
-        sendGifBomb(gifBomb.name, currentPlayerTarget);
-    });
 }
 
 function sendGifBomb(gifName, target) {
     var gifBomb = getGifBombByName(gifName);
-
-    // socket code
-    socketSend({event: 'gifBomb', body: {target: target, gifName: gifName}});
+    for(var i=0 i<collectedGifBombs.length; i++) {
+        if(gifName == collectedGifBombs[i].name) {
+            collectedGifBombs = collectedGifBombs.splice(i, 1);
+            socketSend({event: 'gifBomb', body: {target: target, gifName: gifName}});
+            return;
+        }
+    }
+    console.log("you don't have the gifBomb '" + gifName + "'!");
 }
 
 function addPoints(numPts) {
