@@ -27,6 +27,8 @@ function toggleVR(){
 
     VR = false;
 
+    camera.position.set(0, 0, 0);
+
     controls = new THREE.OrbitControls(camera, element);
     controls.rotateUp(Math.PI / 4);
     controls.target.set(
@@ -44,6 +46,8 @@ function toggleVR(){
 
     //if mobile device, user device orientation controls:
     if(window.DeviceOrientationEvent){
+
+      camera.position.set(0, 0, 0);
 
       //console.log('orientation');
       controls = new THREE.DeviceOrientationControls(camera, true);
@@ -190,8 +194,10 @@ function resize() {
   var height = container.offsetHeight;
 
   camera.aspect = width / height;
-  camera.updateProjectionMatrix();
+  camera.position.set(0, 0, 0);
 
+  camera.updateProjectionMatrix();
+  
   renderer.setSize(width, height);
   effect.setSize(width, height);
 }
