@@ -59,13 +59,6 @@ init();
 
 function init() {
     start_voice();
-    
-    //////////////////////////
-    ///// For testing /////////
-    for(var i=0; i<gifBombs.length; i++) {
-        addGifBombToArsenal(gifBombs[i].name);
-    }
-    /////////////////////////
 }
 
 function start_voice() {
@@ -189,6 +182,14 @@ function addGifBombToArsenal(gifName) {
 
 function sendGifBomb(gifName, target) {
     var gifBomb = getGifBombByName(gifName);
+    
+    /////////////////////////////
+    ////// For testing //////////
+    socketSend({event: 'gifBomb', body: {target: target, gifName: gifName}});
+    console.log("sent Gif Bomb: " + gifName + " to " + target + "!!!");
+    return;
+    /////////////////////////////
+    
     for(var i=0; i<collectedGifBombs.length; i++) {
         if(gifName == collectedGifBombs[i].name) {
             collectedGifBombs.splice(i, 1);
