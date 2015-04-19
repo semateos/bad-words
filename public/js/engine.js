@@ -188,7 +188,7 @@ function sendGifBomb(gifName, target) {
 
 function addPoints(numPts) {
     numPoints += numPts;
-    alert("add " + numPoints + " points!");
+    alert("add " + numPts + " points!");
     // update ui
 }
 
