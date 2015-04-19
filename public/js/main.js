@@ -17,130 +17,6 @@ var KEYDOWN = false;
 var WHICHKEY = undefined;
 var trixelData = undefined;
 
-/*
-var request = new XMLHttpRequest();
-request.open('GET', 'http://api.trixel.io/trixels/26', true);
-
-request.onload = function() {
-  if (this.status >= 200 && this.status < 400) {
-    // Success!
-    trixelData = JSON.parse(this.response);
-
-    console.log('trixel data', trixelData);
-
-    
-
-  } else {
-    console.error('json load error');
-
-  }
-};
-
-request.onerror = function() {
-  console.error('json request error');
-};
-
-request.send();
-*/
-
-//web socket stuff
-
-var socket = io();
-
-function socketSend(message){
-
-  socket.emit('message', message);
-
-}
-
-socket.on('message', function(message){
-
-  console.log(message);
-
-  if(message.event == 'keydown'){
-
-    handleKey(message.key);
-  }
-
-  if(message.event == 'chat'){
-
-    console.log('chat:', message.body);
-    $console.text(message.body);
-
-  }
-
-});
-
-
-//speach recognition controls:
-
-var $console = $('.console');
-
-var show = function(term) {
-
-  var url = 'http://api.flickr.com/services/rest/?tags='+term;
-  console.log($.getJSON(url));
-}
-
-var greeting = function(term) {
-
-  console.log('say:', term);
-  $console.text(term);
-
-  socketSend({event: 'chat', body: term});
-
-  //annyang.start({ autoRestart: false, continuous: false });
-}
-
-var test = function() {
-
-  console.log('test');
-  $console.text('test');
-
-  socketSend({event: 'chat', body: 'test'});
-}
-
-var hello = function() {
-
-  console.log('hello');
-  $console.text('hello');
-
-  socketSend({event: 'chat', body: 'hello'});
-
-}
-
-var banana = function() {
-
-  console.log('banana');
-  $console.text('banana');
-
-  socketSend({event: 'chat', body: 'banana'});
-
-}
-
-var commands = {
-
-  'test': test,
-
-  'hello': hello,
-
-  'banana': banana
-
-  // By defining a part of the following command as optional, annyang will respond to both:
-  // "say hello to my little friend" as well as "say hello friend"
-  //'say *term': greeting
-};
-
-
-
-// Add our commands to annyang
-annyang.addCommands(commands);
-
-annyang.debug();
-
-// Start listening. You can call this here, or attach this call to an event, button, etc.
-annyang.start({ autoRestart: true });
-
 //start three.js stuff
 init();
 animate();
@@ -277,12 +153,6 @@ function init() {
   effect = new THREE.StereoEffect(renderer);
   scene = new THREE.Scene();
 
-  // add saved trixel viewer
-  Trixelworld = new THREE.Object3D();
-  //scene.add( Trixelworld );
-
-  //buildTrixelDisplay(Trixelworld,scene);
-
   //set up the camera:
   camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
   camera.position.set(0, 10, 100);
@@ -370,7 +240,7 @@ function init() {
   // add it to the scene
   scene.add(particleSystem);
 
-  //var text = new THREE.Mesh( new THREE.TextGeometry("Testing", {size: 20, height: 30}), new THREE.MeshNormalMaterial() );
+  //vsar text = new THREE.Mesh( new THREE.TextGeometry("Testing", {size: 20, height: 30}), new THREE.MeshNormalMaterial() );
   //scene.add( text );
 
 

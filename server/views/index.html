@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <link rel="stylesheet" href="css/styles.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/1.6.0/annyang.min.js"></script>
-    <script src="js/engine.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
   </head>
   <body>
 
@@ -16,13 +16,14 @@
   <div id="example"></div>
   <button id="fullscreen">Full Screen</button>
 
-  <script src="bower_components/three.js/three.min.js"></script>
+  <script src="bower_components/three.js/build/three.min.js"></script>
   <script src="js/third-party/threejs/StereoEffect.js"></script>
   <script src="js/third-party/threejs/DeviceOrientationControls.js"></script>
   <script src="js/third-party/threejs/OrbitControls.js"></script>
 
-  <script src="/socket.io/socket.io.js"></script>
+  
 
+  <script src="js/engine.js"></script>
   <script src="js/main.js"></script>
   </body>
 </html>

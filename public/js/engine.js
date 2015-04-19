@@ -1,8 +1,5 @@
-var commandWord = "goodbye";
-annyang.addCommands({"hello": function(){alert("hi!");}});
-// annyang.addCommands({"hello": });
-annyang.start();
-annyang.addCommands({"monkey": function(){alert("goodbye!");}});
+
+var socket = io();
 
 var words = [
     {word:"word1", action:"bomb"},
@@ -46,6 +43,46 @@ var currentPlayerTarget = players[0];
 var me;
 
 
+
+
+//voice recognition:
+
+var greeting = function(term) {
+
+  console.log('say:', term);
+  
+  $console.text(term);
+
+  socketSend({event: 'chat', body: term});
+
+  //annyang.start({ autoRestart: false, continuous: false });
+}
+
+
+var commands = {
+
+  // By defining a part of the following command as optional, annyang will respond to both:
+  // "say hello to my little friend" as well as "say hello friend"
+  'say *term': greeting
+};
+
+// Add our commands to annyang
+annyang.addCommands(commands);
+
+annyang.debug();
+
+// Start listening. You can call this here, or attach this call to an event, button, etc.
+annyang.start();
+
+
+annyang.addCommands({"hello": function(){alert("hi!");}});
+
+annyang.addCommands({"monkey": function(){alert("goodbye!");}});
+
+
+
+//game functions
+
 function registerPlayers() {
     // numPlayers gets set from reading how many in the socket
     var numPlayers = 3;
@@ -79,8 +116,15 @@ function receiveGifBomb(gifName) {
     }
 }
 
+//multiplayer socket.io shit
 
 if(socket) {
+
+    function socketSend(message){
+
+        socket.emit('message', message);
+    }
+
     socket.on('message', function(message){
       console.log(message);
         switch(message.event) {
