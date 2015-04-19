@@ -49,29 +49,29 @@ function init() {
     // voice recognition
     var commandWord = "whatever";
     annyang.addCommands({commandWord: function(){alert("whatever!");}});
+    
     var greeting = function(term) {
-
         console.log('say:', term);
-
-        $console.text(term);
-
+        // $console.text(term);
         socketSend({event: 'chat', body: term});
-
-        //annyang.start({ autoRestart: false, continuous: false });
     }
-
-
+    
+    //$console.text(term);
+    
+    //socketSend({event: 'chat', body: term});
+    
+    //annyang.start({ autoRestart: false, continuous: false });
     var commands = {
-
-        // By defining a part of the following command as optional, annyang will respond to both:
-        // "say hello to my little friend" as well as "say hello friend"
-        'say *term': greeting
+      // By defining a part of the following command as optional, annyang will respond to both:
+      // "say hello to my little friend" as well as "say hello friend"
+      'say *term': greeting
     };
+
     // Add our commands to annyang
     annyang.addCommands(commands);
     annyang.debug();
     // Start listening. You can call this here, or attach this call to an event, button, etc.
-    annyang.start();
+    annyang.start({ autoRestart: true });
     annyang.addCommands({"hello": function(){alert("hi!");}});
     annyang.addCommands({"monkey": function(){alert("goodbye!");}});
 }
@@ -84,8 +84,15 @@ function socketSend(message){
 }
 
 socket.on('message', function(message){
+    alert("message received:" + message.body);
   console.log(message);
     switch(message.event) {
+    case "chat":
+        console.log("word received thru socket: " + message.body);
+    break;
+    case "setPlayer":
+        me = getPlayerByName(message.body).name;
+    break;
     case "removeCommand":
         removeCommand(message.body); // would be a commandName
     break;
@@ -97,9 +104,6 @@ socket.on('message', function(message){
                 receiveGifBomb(message.body); // would be a gifName
             }
         }
-    break;
-    case "setPlayer":
-        me = getPlayerByName(message.body).name;
     break;
     }
 });

@@ -18,8 +18,8 @@ var WHICHKEY = undefined;
 var trixelData = undefined;
 
 //start three.js stuff
-init();
-animate();
+//init();
+//animate();
 
 //fullscreen();
 
@@ -118,6 +118,7 @@ function init() {
       }
     }
 
+    /*
     //video containers for left and right eye
     var video1 = document.querySelector('video.left');
     var video2 = document.querySelector('video.right');
@@ -132,6 +133,7 @@ function init() {
 
       }, errorCallback);
     }
+    */
   }
 
   if (typeof MediaStreamTrack === 'undefined'){
