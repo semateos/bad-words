@@ -2,7 +2,7 @@
 var socket = io();
 
 var words = [
-    {word:"supercalifragilisticexpialidocious", action:{type:"gifBomb", gifName:"doubleRainbow"}},
+    {word:"supercalifragilisticexpialidocious", action:{type:"gifBomb", gifName:"bananaMan"}},
     {word:"penis", action:{type:"gifBomb", gifName:"bananaMan"}},
     {word:"nipple", action:{type:"gifBomb", gifName:"stimpyButton"}},
     {word:"shocker", action:{type:"gifBomb", gifName:"omgCat"}},
@@ -21,7 +21,6 @@ var words = [
 
 var gifBombs = [
     {name:"bananaMan", src:"images/banana-man.gif"},
-    {name:"doubleRainbow", src:"images/double-rainbow.jpg"},
     {name:"freeFoodDog", src:"images/free-food-dog.gif"},
     {name:"goodDay", src:"images/good-day.gif"},
     {name:"keyboardCat", src:"images/keyboard-cat.gif"},
@@ -29,7 +28,7 @@ var gifBombs = [
     {name:"recursiveSmiley", src:"images/recursive-smiley.gif"},
     {name:"rickRoll", src:"images/rick-roll.gif"},
     {name:"ronaldSmack", src:"images/ronald-smack.gif"},
-    {name:"sloMoFace", src:"images/sloMoFace.gif"},
+    {name:"sloMoFace", src:"images/slo-mo-face.gif"},
     {name:"stimpyButton", src:"images/stimpy-button.gif"},
     {name:"trippyMan", src:"images/trippy-man.gif"}
 ];
@@ -59,13 +58,6 @@ init();
 
 function init() {
     start_voice();
-    
-    //////////////////////////
-    ///// For testing /////////
-    for(var i=0; i<gifBombs.length; i++) {
-        addGifBombToArsenal(gifBombs[i].name);
-    }
-    /////////////////////////
 }
 
 function start_voice() {
@@ -189,6 +181,14 @@ function addGifBombToArsenal(gifName) {
 
 function sendGifBomb(gifName, target) {
     var gifBomb = getGifBombByName(gifName);
+    
+    /////////////////////////////
+    ////// For testing //////////
+    socketSend({event: 'gifBomb', body: {target: target, gifName: gifName}});
+    console.log("sent Gif Bomb: " + gifName + " to " + target + "!!!");
+    return;
+    /////////////////////////////
+    
     for(var i=0; i<collectedGifBombs.length; i++) {
         if(gifName == collectedGifBombs[i].name) {
             collectedGifBombs.splice(i, 1);
@@ -208,9 +208,11 @@ function addPoints(numPts) {
 
 function receiveGifBomb(gifName, fromPlayer) {
     var gifBomb = getGifBombByName(gifName);
+    document.getElementById("gifBomb").style.display = "block";
     document.getElementById("gifBomb").setAttribute("src", gifBomb.src);
     setTimeout(function(){
         document.getElementById("gifBomb").setAttribute("src", "");
+        document.getElementById("gifBomb").style.display = "none";
     }, 9000);
     // ui display Gif fullscreen
     // also display who sent it
