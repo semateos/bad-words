@@ -44,36 +44,43 @@ var currentPlayerTarget = players[0];
 
 var me;
 
-init();
 
-function init() {
+start_voice();
+
+var say = function(term) {
+
+    console.log('said:', term);
+    // $console.text(term);
+    socketSend({event: 'chat', body: term});
+}
+
+
+function start_voice() {
+
     // voice recognition
     annyang.start({ autoRestart: true });
     
-    for(var i=0; i<words.length; i++) {
-        var word = words[i].word
-        annyang.addCommands({[word]: function(){alert("word matched!");}});
-    }
-    
-    var greeting = function(term) {
-        console.log('say:', term);
-        // $console.text(term);
-        socketSend({event: 'chat', body: term});
-    }
-    
-    var commands = {
-      // By defining a part of the following command as optional, annyang will respond to both:
-      // "say hello to my little friend" as well as "say hello friend"
-      'say *term': greeting
-    };
-    
-    // Add our commands to annyang
-    
+    //show speach debug
     annyang.debug();
+
+    var word_matched = function(term) {
     
-    // Start listening. You can call this here, or attach this call to an event, button, etc.
+        console.log('said:', term);
+
+        socketSend({event: 'said', body: term});
+    }
+
+    var commands = {};
+
+    for(var i=0; i<words.length; i++) {
+
+        var word = words[i].word;
+
+        commands[word] = word_matched;
+    }
+
+    // Add word commands to annyang
     annyang.addCommands(commands);
-    //annyang.start({ autoRestart: false, continuous: false });
 }
 
 
