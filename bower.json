@@ -20,6 +20,6 @@
     "fullscreener": "~1.0.1",
     "three.js": "mrdoob/three.js",
     "fermata": "~0.10.1",
-    "annyang": "TalAter/annyang"
+    "annyang": "semateos/annyang"
   }
 }
