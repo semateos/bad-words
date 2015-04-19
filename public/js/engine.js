@@ -2,19 +2,19 @@
 var socket = io();
 
 var words = [
-    {word:"supercalifragilisticexpialidocious", action:"bomb"},
-    {word:"silly", action:"bomb"},
-    {word:"penis", action:"bomb"},
-    {word:"nipple", action:"bomb"},
-    {word:"shocker", action:"bomb"},
-    {word:"dildo", action:"bomb"},
-    {word:"socket", action:"bomb"},
-    {word:"pickle", action:"bomb"},
-    {word:"stank", action:"bomb"},
-    {word:"twat", action:"bomb"},
-    {word:"snatch", action:"bomb"},
-    {word:"thong", action:"+3"},
-    {word:"spank", action:"+2"}
+    {word:"supercalifragilisticexpialidocious", action:"gifBomb"},
+    {word:"penis", action:{type:"gifBomb", gifName:"cat"}},
+    {word:"nipple", action:{type:"gifBomb", gifName:"cat"}},
+    {word:"shocker", action:{type:"gifBomb", gifName:"cat"}},
+    {word:"dildo", action:{type:"gifBomb", gifName:"cat"}},
+    {word:"socket", action:{type:"gifBomb", gifName:"cat"}},
+    {word:"pickle", action:{type:"gifBomb", gifName:"cat"}},
+    {word:"stank", action:{type:"gifBomb", gifName:"cat"}},
+    {word:"twat", action:{type:"gifBomb", gifName:"cat"}},
+    {word:"snatch", action:{type:"gifBomb", gifName:"cat"}},
+    {word:"thong", action:{type:"addPoints", numPoints: 3}},
+    {word:"silly", action:{type:"addPoints", numPoints: 5}},
+    {word:"spank", action:{type:"addPoints", numPoints: 2}}
 ];
 
 var gifBombs = [
@@ -50,6 +50,7 @@ var colors = [
 var crosshairsTarget = "";
 var collectedGifBombs = [];
 var currentPlayerTarget = null;
+var numPoints = 0;
 var me;
 
 start_voice();
@@ -64,6 +65,14 @@ function start_voice() {
     
     var word_matched = function(term) {
         console.log('said:', term);
+        var word = getWord(term);
+        if(targetInCrosshairs == term) {
+            performWordAction(word);
+        }
+        ////////////////////////////
+        /////// for testing ////////
+        performWordAction(word);
+        ////////////////////////////
         socketSend({event: 'said', body: term});
     }
     
@@ -80,6 +89,24 @@ function start_voice() {
     annyang.addCommands(commands);
 }
 
+function getWord(term) {
+    for(var i=0; i<words.length; i++) {
+        if(term == words[i].word){
+            return words[i];
+        }
+    }
+}
+
+function performWordAction(word) {
+    switch(word.action.type) {
+    case "gifBomb":
+        sendGifBomb(word.action.gifName);
+    break;
+    case "addPoints":
+        addPoints(word.action.numPoints);
+    break;
+    }
+}
 
 // multiplayer socket.io shit
 
@@ -115,18 +142,14 @@ socket.on('message', function(message){
 
 function registerPlayers() {
     // numPlayers gets set from reading how many in the socket
-    var numPlayers = 3;
+    /*var numPlayers = 3;
     for(var i=0; i<numPlayers; i++) {
         
-    }
+    }*/
 }
 
 function targetInCrosshairs(target) {
-    if(target.type == "player"){
-        
-    } else if(target.type == "word"){
-        crosshairsTarget = target;
-    }
+    crosshairsTarget = target;
 }
 
 function nothingInCrosshairs() {
@@ -146,6 +169,12 @@ function sendGifBomb(gifName, target) {
 
     // socket code
     socketSend({event: 'gifBomb', body: {target: target, gifName: gifName}});
+}
+
+function addPoints(numPts) {
+    numPoints += numPts;
+    alert("add " + numPoints + " points!");
+    // update ui
 }
 
 function receiveGifBomb(gifName, fromPlayer) {
