@@ -222,6 +222,10 @@ function render(dt) {
   for(var i = 0; i < particleCount; i++){
 
     particles[i].quaternion.copy( camera.quaternion );
+
+    particles[i].position.x -= 0.02;
+    particles[i].position.y -= 0.02;
+    particles[i].position.z -= 0.02;
   }
 
   if(VR){

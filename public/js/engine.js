@@ -190,7 +190,7 @@ function receiveGifBomb(gifName, fromPlayer) {
 // util functions
 function getGifBombByName(gifName) {
     for(var i=0; i<gifBombs.length; i++) {
-        if(gifName == gifs[i].name) {
+        if(gifName == gifBombs[i].name) {
             return gifBombs[i];
         }
     }
