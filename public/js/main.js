@@ -39,6 +39,7 @@ function toggleVR(){
     controls.noZoom = true;
     controls.noPan = true;
     controls.update();
+    controls.autoFollowMouse(true);
 
   }else{
 
@@ -119,7 +120,7 @@ function init() {
   }
 
   // make the three.js background transparent:
-  renderer = new THREE.WebGLRenderer({ alpha: true });
+  renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setClearColor( 0x000000, 0 );
 
   // create the three container:
@@ -146,35 +147,19 @@ function init() {
   );
   controls.noZoom = true;
   controls.noPan = true;
-  
-  //controls.autoFollowMouse(true);
+
+  controls.autoFollowMouse(true);
 
   //add light to the scene (this is red light)
   //var light = new THREE.HemisphereLight(0xff0000, 0x000000, 1);
   //scene.add(light);
 
-  //add an object to the scene
-  cube = new THREE.Mesh( new THREE.DodecahedronGeometry( 100 ), new THREE.MeshBasicMaterial( { color: 0xff00ff, wireframe: false } ));
-  cube.position.x = 300;
-  cube.position.y = 70;
-  cube.position.z = 50;
-  //scene.add( cube );
-
-  /*
-  text_geo = new THREE.TextGeometry("Testing", {size: 20, height: 1, font: 'gentilis'});
-  text = new THREE.Mesh( text_geo, new THREE.MeshNormalMaterial() );
-  text.position.x = 300;
-  text.position.y = 70;
-  text.position.z = 50;
-
-  scene.add( text );
-  */
 
   particles = [];
 
-  for(var i = 0; i < particleCount; i++){
+  for(var i = 0; i < words.length; i++){
 
-    var word = words[i % words.length];
+    var word = words[i];
 
     var text_geo = new THREE.TextGeometry(word.word, {size: 20, height: 1, font: 'gentilis'});
     var text = new THREE.Mesh( text_geo, new THREE.MeshNormalMaterial() );
@@ -184,6 +169,8 @@ function init() {
     text.position.z = Math.random() * 500 - 250;
 
     particles[i] = text;
+
+    word.particle = particles[i];
 
     scene.add( text );
   }
@@ -226,7 +213,7 @@ function render(dt) {
   //text.quaternion.copy( camera.quaternion );
 
 
-  for(var i = 0; i < particleCount; i++){
+  for(var i = 0; i < words.length; i++){
 
     particles[i].quaternion.copy( camera.quaternion );
 
