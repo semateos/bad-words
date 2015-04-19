@@ -191,9 +191,7 @@ function sendGifBomb(gifName, target) {
     var gifBomb = getGifBombByName(gifName);
     for(var i=0; i<collectedGifBombs.length; i++) {
         if(gifName == collectedGifBombs[i].name) {
-            alert("before splice: " + JSON.stringify(collectedGifBombs));
             collectedGifBombs.splice(i, 1);
-            alert("after splice: " + JSON.stringify(collectedGifBombs));
             socketSend({event: 'gifBomb', body: {target: target, gifName: gifName}});
             console.log("sent Gif Bomb: " + gifName + " to " + target + "!!!");
             return;
