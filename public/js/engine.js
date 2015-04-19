@@ -61,11 +61,11 @@ function start_voice() {
     annyang.start({ autoRestart: true });
     
     //show speach debug
-    annyang.debug();
+    // annyang.debug();
     
     var word_matched = function(term) {
         
-        console.log('said:', term);
+        console.log('I said:', term);
 
         var word = getWord(term);
 
@@ -78,7 +78,6 @@ function start_voice() {
         /////// for testing ////////
         performWordAction(word);
         ////////////////////////////
-
         socketSend({event: 'said', body: term});
     }
     
@@ -177,7 +176,7 @@ function addGifBombToArsenal(gifName) {
 
 function sendGifBomb(gifName, target) {
     var gifBomb = getGifBombByName(gifName);
-    for(var i=0 i<collectedGifBombs.length; i++) {
+    for(var i=0; i<collectedGifBombs.length; i++) {
         if(gifName == collectedGifBombs[i].name) {
             collectedGifBombs = collectedGifBombs.splice(i, 1);
             socketSend({event: 'gifBomb', body: {target: target, gifName: gifName}});
