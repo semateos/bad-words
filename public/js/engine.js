@@ -51,9 +51,9 @@ var greeting = function(term) {
 
   console.log('say:', term);
   
-  $console.text(term);
+  //$console.text(term);
 
-  socketSend({event: 'chat', body: term});
+  //socketSend({event: 'chat', body: term});
 
   //annyang.start({ autoRestart: false, continuous: false });
 }
@@ -72,12 +72,10 @@ annyang.addCommands(commands);
 annyang.debug();
 
 // Start listening. You can call this here, or attach this call to an event, button, etc.
-annyang.start();
+annyang.start({ autoRestart: true });
 
 
-annyang.addCommands({"hello": function(){alert("hi!");}});
 
-annyang.addCommands({"monkey": function(){alert("goodbye!");}});
 
 
 
