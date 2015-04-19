@@ -77,7 +77,7 @@ function start_voice() {
         
         var word = getWord(term);
         
-        if(word && word.particle.intersected) {
+        if(word && word.particle.box.intersected) {
             performWordAction(word);
         }
         

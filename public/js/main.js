@@ -7,7 +7,7 @@ var effect, controls;
 var element, container;
 var cube, time, text, text_geo;
 
-var particleSystem, particles,
+var particleSystem, particles, boxes,
 particleSystemHeight = 500,
 particleCount = 50;
 
@@ -133,6 +133,7 @@ function init() {
   //stereo render effect:
   effect = new THREE.StereoEffect(renderer);
   scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2( 0x000000, 0.0025 );
 
   //set up the camera:
   camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
@@ -158,23 +159,38 @@ function init() {
 
 
   particles = [];
+  boxes = [];
 
   for(var i = 0; i < words.length; i++){
 
     var word = words[i];
 
+    var group = new THREE.Object3D();//create an empty container
+
     var text_geo = new THREE.TextGeometry(word.word, {size: 20, height: 1, font: 'gentilis'});
     var text = new THREE.Mesh( text_geo, new THREE.MeshLambertMaterial({color: 0x00ff00}) );
 
-    text.position.x = Math.random() * 500 - 250;
-    text.position.y = Math.random() * 500 - 250;
-    text.position.z = Math.random() * 500 - 250;
+    var bbox = new THREE.BoundingBoxHelper( text, 0x00ff00 ); 
+    bbox.update(); 
 
-    particles[i] = text;
+  
+    group.add( text );
+    group.add( bbox );
+
+    group.box = bbox;
+    group.text = text;
+
+    group.position.x = Math.random() * 500 - 250;
+    group.position.y = Math.random() * 500 - 250;
+    group.position.z = Math.random() * 500 - 250;
+
+    particles[i] = group;
+    boxes[i] = bbox;
 
     word.particle = particles[i];
 
-    scene.add( text );
+    scene.add( group );
+
   }
 
 }
@@ -223,18 +239,18 @@ function render(dt) {
     particles[i].position.y -= 0.02;
     particles[i].position.z -= 0.02;
 
-    if(particles[i].intersected && particles[i].intersected > 0){
+    if(particles[i].box.intersected && particles[i].box.intersected > 0){
 
-      particles[i].intersected--;
+      particles[i].box.intersected--;
 
     }else{
 
-      particles[i].intersected = false;
+      particles[i].box.intersected = false;
 
-      particles[i].material.color.set( 0x00ff00 );
+      particles[i].box.material.color.set( 0x00ff00 );
     }
 
-    
+
     
   }
 
@@ -243,9 +259,11 @@ function render(dt) {
   raycaster.setFromCamera( center, camera ); 
 
   // calculate objects intersecting the picking ray
-  var intersects = raycaster.intersectObjects( scene.children );
+  var intersects = raycaster.intersectObjects( boxes );
 
   for ( var i = 0; i < intersects.length; i++ ) {
+
+    console.log('intersects', intersects);
 
     intersects[ i ].object.material.color.set( 0xff0000 );
     
