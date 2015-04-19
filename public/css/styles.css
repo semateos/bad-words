@@ -4,7 +4,7 @@ body {
   background: #000;
 }
 
-#example {
+#threejs {
   position: absolute;
   top: 0;
   left: 0;
@@ -52,9 +52,14 @@ video{
   padding-right: 110px;
 }
 
-button{
+#buttons{
 	position: absolute;
 	bottom: 10px;
 	right: 10px;
 	z-index: 100;
+}
+
+#buttons button{
+  display: inline-block;
+  margin-left: 5px;
 }

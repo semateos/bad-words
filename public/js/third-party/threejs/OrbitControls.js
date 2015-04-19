@@ -306,6 +306,29 @@ THREE.OrbitControls = function ( object, domElement ) {
 
   };
 
+  this.autoFollowMouse = function(follow){
+
+    this.autofollow = follow;
+
+    if(follow){
+    
+      if ( this.noRotate === true ) return;
+
+      state = STATE.ROTATE;
+
+      //rotateStart.set( event.clientX, event.clientY );
+
+      this.domElement.addEventListener( 'mousemove', onMouseMove, false );
+      //scope.dispatchEvent( startEvent );
+
+    }else{
+
+      this.domElement.removeEventListener( 'mousemove', onMouseMove, false );
+      //scope.dispatchEvent( endEvent );
+      state = STATE.NONE;
+    }
+  }
+
   function getAutoRotationAngle() {
 
     return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed;
@@ -319,6 +342,8 @@ THREE.OrbitControls = function ( object, domElement ) {
   }
 
   function onMouseDown( event ) {
+
+    if ( scope.autofollow === true ) return;
 
     if ( scope.enabled === false ) return;
     event.preventDefault();

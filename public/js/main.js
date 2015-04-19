@@ -5,86 +5,58 @@
 var camera, scene, renderer;
 var effect, controls;
 var element, container;
-var cube, time;
+var cube, time, text, text_geo;
 
 var particleSystem, particles,
 particleSystemHeight = 500,
-particleCount = 2000;
+particleCount = 50;
 
 var clock = new THREE.Clock();
 
-var KEYDOWN = false;
-var WHICHKEY = undefined;
-var trixelData = undefined;
+var VR = false;
 
-//start three.js stuff
-init();
-animate();
+var full_button = document.getElementById('fullscreen');
+full_button.addEventListener('click', fullscreen, false);
 
-//fullscreen();
+var vr_button = document.getElementById('vr-mode');
+vr_button.addEventListener('click', toggleVR, false);
 
-//socket-based remote keyboard control
+function toggleVR(){
 
-var camera_y, camera_x;
+  if(VR){
 
-function handleKey(WHICHKEY){
+    VR = false;
 
-  //console.log(keyevent);
+    controls = new THREE.OrbitControls(camera, element);
+    controls.rotateUp(Math.PI / 4);
+    controls.target.set(
+      camera.position.x + 0.1,
+      camera.position.y,
+      camera.position.z
+    );
+    controls.noZoom = true;
+    controls.noPan = true;
+    controls.update();
 
-  switch(WHICHKEY){
+  }else{
 
-    case 87: //w key
+    VR = true;
 
-      //console.log('forward');
-      camera_y = camera.position.y - 10;
-      break;
+    //if mobile device, user device orientation controls:
+    if(window.DeviceOrientationEvent){
 
-    case 83: //s key
-
-      //console.log('back');
-      camera_y = camera.position.y + 10;
-      break;
-
-    case 65: //a key
-
-      //console.log('left');
-      camera_x = camera.position.x - 10;
-      break;
-
-    case 68: //d key
-
-      //console.log('right');
-      camera_x = camera.position.x + 10;
-      break;
+      //console.log('orientation');
+      controls = new THREE.DeviceOrientationControls(camera, true);
+      controls.connect();
+      controls.update();
+    }
   }
 }
 
 
-
-window.onkeydown = function(e) {
-  
-  KEYDOWN = true;
-  
-  WHICHKEY = e.keyCode ? e.keyCode : e.which;
-}
-
-function doKeyDOWN() {
-  
-  // debugger
-  var key = WHICHKEY ? WHICHKEY : WHICHKEY;
-
-  var keyevent = {'event': 'keydown', 'key': key};
-
-  handleKey(WHICHKEY);
-
-  socketSend(keyevent);
-}
-
-window.onkeyup = function(e) {
-  
-  KEYDOWN = false;
-}
-
+//start three.js stuff
+init();
+animate();
 
 function init() {
   
@@ -148,7 +120,7 @@ function init() {
 
   // create the three container:
   element = renderer.domElement;
-  container = document.getElementById('example');
+  container = document.getElementById('threejs');
   container.appendChild(element);
 
   //stereo render effect:
@@ -157,11 +129,9 @@ function init() {
 
   //set up the camera:
   camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
-  camera.position.set(0, 10, 100);
+  camera.position.set(0, 0, 0);
   scene.add(camera);
 
-  camera_y = camera.position.y;
-  camera_x = camera.position.x;
 
   controls = new THREE.OrbitControls(camera, element);
   controls.rotateUp(Math.PI / 4);
@@ -172,57 +142,47 @@ function init() {
   );
   controls.noZoom = true;
   controls.noPan = true;
-
-  //if mobile device, user device orientation controls:
-  if(window.DeviceOrientationEvent){
-
-    //console.log('orientation');
-
-    /*
-    controls = new THREE.DeviceOrientationControls(camera, true);
-    controls.connect();
-    controls.update();
-    */
-    //element.addEventListener('click', fullscreen, false);
-
-    console.log('device orientation');
-  }
-
-  var full_button = document.getElementById('fullscreen');
-  full_button.addEventListener('click', fullscreen, false);
-  
+  //controls.autoFollowMouse(true);
 
   //add light to the scene (this is red light)
   var light = new THREE.HemisphereLight(0xff0000, 0x000000, 1);
   scene.add(light);
 
   //add an object to the scene
-  cube = new THREE.Mesh( new THREE.DodecahedronGeometry( 100 ), new THREE.MeshBasicMaterial( { color: 0xff00ff, wireframe: true } ));
+  cube = new THREE.Mesh( new THREE.DodecahedronGeometry( 100 ), new THREE.MeshBasicMaterial( { color: 0xff00ff, wireframe: false } ));
   cube.position.x = 300;
   cube.position.y = 70;
   cube.position.z = 50;
-  scene.add( cube );
+  //scene.add( cube );
 
+  /*
+  text_geo = new THREE.TextGeometry("Testing", {size: 20, height: 1, font: 'gentilis'});
+  text = new THREE.Mesh( text_geo, new THREE.MeshNormalMaterial() );
+  text.position.x = 300;
+  text.position.y = 70;
+  text.position.z = 50;
 
-  // create the particle variables
-  particles = new THREE.Geometry();
+  scene.add( text );
+  */
 
-  pMaterial = new THREE.PointCloudMaterial({
-    color: 0xFF0000,
-    size: 3,
-    
-    fog: true, 
-    blending: THREE.AdditiveBlending,
-    transparent: true
-  });
+  particles = [];
 
+  for(var i = 0; i < particleCount; i++){
 
-  //vsar text = new THREE.Mesh( new THREE.TextGeometry("Testing", {size: 20, height: 30}), new THREE.MeshNormalMaterial() );
-  //scene.add( text );
+    var word = words[i % words.length];
 
+    var text_geo = new THREE.TextGeometry(word.word, {size: 20, height: 1, font: 'gentilis'});
+    var text = new THREE.Mesh( text_geo, new THREE.MeshNormalMaterial() );
 
-  window.addEventListener('resize', resize, false);
-  setTimeout(resize, 1);
+    text.position.x = Math.random() * 500 - 250;
+    text.position.y = Math.random() * 500 - 250;
+    text.position.z = Math.random() * 500 - 250;
+
+    particles[i] = text;
+
+    scene.add( text );
+  }
+
 }
 
 function resize() {
@@ -249,26 +209,31 @@ function render(dt) {
 
   time = clock.getElapsedTime();
 
-
-  cube.rotation.x += 0.02;
+  //cube.rotation.x += 0.02;
   cube.rotation.y += 0.02;
-  cube.rotation.z += 0.02;
-  cube.position.y  = 100 + 20 * Math.sin(time * 3);
+  //cube.rotation.z += 0.02;
+  //cube.position.x  = 100 + 20 * Math.sin(time * 3);
 
-  //particleSystem.rotation.y += 0.01;
-  if (KEYDOWN) {
-    doKeyDOWN();
-  };
-  //update camera
-  camera.position.y = camera_y;
-  camera.position.x = camera_x;
-  camera.updateProjectionMatrix();
+
+  // simple billboard method
+  //text.quaternion.copy( camera.quaternion );
+
+
+  for(var i = 0; i < particleCount; i++){
+
+    particles[i].quaternion.copy( camera.quaternion );
+  }
+
+  if(VR){
+
+    effect.render(scene, camera);
+
+  }else{
+
+    renderer.render(scene, camera);
+  }
 
   
-  // simple billboard method
-  //Trixelworld.quaternion.copy( camera.quaternion );
-
-  effect.render(scene, camera);
 }
 
 
@@ -291,7 +256,7 @@ function fullscreen() {
   } else if (document.body.webkitRequestFullscreen) {
     document.body.webkitRequestFullscreen();
   }
-
-  //annyang.start();
-
 }
+
+
+
