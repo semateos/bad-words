@@ -2,7 +2,7 @@
 var socket = io();
 
 var words = [
-    {word:"supercalifragilisticexpialidocious", action:{type:"gifBomb", gifName:"doubleRainbow"}},
+    {word:"supercalifragilisticexpialidocious", action:{type:"gifBomb", gifName:"bananaMan"}},
     {word:"penis", action:{type:"gifBomb", gifName:"bananaMan"}},
     {word:"nipple", action:{type:"gifBomb", gifName:"stimpyButton"}},
     {word:"shocker", action:{type:"gifBomb", gifName:"omgCat"}},
@@ -21,7 +21,6 @@ var words = [
 
 var gifBombs = [
     {name:"bananaMan", src:"images/banana-man.gif"},
-    {name:"doubleRainbow", src:"images/double-rainbow.jpg"},
     {name:"freeFoodDog", src:"images/free-food-dog.gif"},
     {name:"goodDay", src:"images/good-day.gif"},
     {name:"keyboardCat", src:"images/keyboard-cat.gif"},
