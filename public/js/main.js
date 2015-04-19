@@ -12,6 +12,8 @@ particleSystemHeight = 500,
 particleCount = 50;
 
 var clock = new THREE.Clock();
+var raycaster = new THREE.Raycaster();
+var center = new THREE.Vector2(0,0);
 
 var VR = false;
 
@@ -151,8 +153,8 @@ function init() {
   controls.autoFollowMouse(true);
 
   //add light to the scene (this is red light)
-  //var light = new THREE.HemisphereLight(0xff0000, 0x000000, 1);
-  //scene.add(light);
+  var light = new THREE.HemisphereLight(0xffff00, 0x000000, 1);
+  scene.add(light);
 
 
   particles = [];
@@ -162,7 +164,7 @@ function init() {
     var word = words[i];
 
     var text_geo = new THREE.TextGeometry(word.word, {size: 20, height: 1, font: 'gentilis'});
-    var text = new THREE.Mesh( text_geo, new THREE.MeshNormalMaterial() );
+    var text = new THREE.Mesh( text_geo, new THREE.MeshLambertMaterial({color: 0x00ff00}) );
 
     text.position.x = Math.random() * 500 - 250;
     text.position.y = Math.random() * 500 - 250;
@@ -220,6 +222,34 @@ function render(dt) {
     particles[i].position.x -= 0.02;
     particles[i].position.y -= 0.02;
     particles[i].position.z -= 0.02;
+
+    if(particles[i].intersected && particles[i].intersected > 0){
+
+      particles[i].intersected--;
+
+    }else{
+
+      particles[i].intersected = false;
+
+      particles[i].material.color.set( 0x00ff00 );
+    }
+
+    
+    
+  }
+
+
+  // update the picking ray with the camera and mouse position  
+  raycaster.setFromCamera( center, camera ); 
+
+  // calculate objects intersecting the picking ray
+  var intersects = raycaster.intersectObjects( scene.children );
+
+  for ( var i = 0; i < intersects.length; i++ ) {
+
+    intersects[ i ].object.material.color.set( 0xff0000 );
+    
+    intersects[ i ].object.intersected = 300;
   }
 
   if(VR){

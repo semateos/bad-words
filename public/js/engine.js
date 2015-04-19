@@ -69,20 +69,22 @@ function start_voice() {
 
         var word = getWord(term);
 
-        if(targetInCrosshairs == term) {
+        if(word && word.particle.intersected) {
 
             performWordAction(word);
         }
 
         ////////////////////////////
         /////// for testing ////////
-        performWordAction(word);
+        //performWordAction(word);
         ////////////////////////////
 
         socketSend({event: 'said', body: term});
     }
     
-    var commands = {};
+    var commands = {
+        ':term' : word_matched
+    };
     
     /*for(var i=0; i<words.length; i++) {
 
@@ -91,7 +93,7 @@ function start_voice() {
         commands[word] = word_matched;
     }*/
     
-    commands[':term'] = word_matched;
+    //commands[':term'] = word_matched;
 
     // Add word commands to annyang
     annyang.addCommands(commands);
