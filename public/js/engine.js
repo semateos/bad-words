@@ -42,52 +42,76 @@ var currentPlayerTarget = players[0];
 
 var me;
 
+init();
+
+function init() {
+    
+    // voice recognition
+    var commandWord = "whatever";
+    annyang.addCommands({commandWord: function(){alert("whatever!");}});
+    var greeting = function(term) {
+
+        console.log('say:', term);
+
+        $console.text(term);
+
+        socketSend({event: 'chat', body: term});
+
+        //annyang.start({ autoRestart: false, continuous: false });
+    }
 
 
+    var commands = {
 
-//voice recognition:
-
-var greeting = function(term) {
-
-  console.log('say:', term);
-  
-  $console.text(term);
-
-  socketSend({event: 'chat', body: term});
-
-  //annyang.start({ autoRestart: false, continuous: false });
+        // By defining a part of the following command as optional, annyang will respond to both:
+        // "say hello to my little friend" as well as "say hello friend"
+        'say *term': greeting
+    };
+    // Add our commands to annyang
+    annyang.addCommands(commands);
+    annyang.debug();
+    // Start listening. You can call this here, or attach this call to an event, button, etc.
+    annyang.start();
+    annyang.addCommands({"hello": function(){alert("hi!");}});
+    annyang.addCommands({"monkey": function(){alert("goodbye!");}});
 }
 
 
-var commands = {
+// multiplayer socket.io shit
 
-  // By defining a part of the following command as optional, annyang will respond to both:
-  // "say hello to my little friend" as well as "say hello friend"
-  'say *term': greeting
-};
+function socketSend(message){
+    socket.emit('message', message);
+}
 
-// Add our commands to annyang
-annyang.addCommands(commands);
+socket.on('message', function(message){
+  console.log(message);
+    switch(message.event) {
+    case "removeCommand":
+        removeCommand(message.body); // would be a commandName
+    break;
+    case "gifBomb":
+        if(message.body.target == "all") {
+            receiveGifBomb(message.body); // would be a gifName
+        } else {
+            if (me == getPlayerByName(message.body.target)){
+                receiveGifBomb(message.body); // would be a gifName
+            }
+        }
+    break;
+    case "setPlayer":
+        me = getPlayerByName(message.body).name;
+    break;
+    }
+});
 
-annyang.debug();
 
-// Start listening. You can call this here, or attach this call to an event, button, etc.
-annyang.start();
-
-
-annyang.addCommands({"hello": function(){alert("hi!");}});
-
-annyang.addCommands({"monkey": function(){alert("goodbye!");}});
-
-
-
-//game functions
+// game functions
 
 function registerPlayers() {
     // numPlayers gets set from reading how many in the socket
     var numPlayers = 3;
     for(var i=0; i<numPlayers; i++) {
-        //players.push(
+        
     }
 }
 
@@ -116,37 +140,6 @@ function receiveGifBomb(gifName) {
     }
 }
 
-//multiplayer socket.io shit
-
-if(socket) {
-
-    function socketSend(message){
-
-        socket.emit('message', message);
-    }
-
-    socket.on('message', function(message){
-      console.log(message);
-        switch(message.event) {
-        case "removeCommand":
-            removeCommand(message.body); // would be a commandName
-        break;
-        case "gifBomb":
-            if(message.body.target == "all") {
-                receiveGifBomb(message.body); // would be a gifName
-            } else {
-                if (me == getPlayerByName(message.body.target)){
-                    receiveGifBomb(message.body); // would be a gifName
-                }
-            }
-        break;
-        case "setPlayer":
-            me = getPlayerByName(message.body).name;
-        break;
-        }
-    });
-}
-
 ////////////////////////////
 // util functions
 function getGifBombByName(gifName) {
@@ -167,4 +160,8 @@ function getPlayerByName(playerName) {
 
 function removeCommand(commandWord) {
     annyang.removeCommands(commandWord);
+}
+
+function addCommand(commandWord, action) {
+    annyang.addCommands({commandWord: action});
 }
