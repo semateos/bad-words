@@ -78,21 +78,23 @@ function start_voice() {
     var word_matched = function(term) {
         
         console.log('I said:', term);
-
+        
         var word = getWord(term);
-
-        if(targetInCrosshairs == term) {
+        
+        if(word && word.particle.intersected) {
             performWordAction(word);
         }
-
+        
         ////////////////////////////
         /////// For testing ////////
-        performWordAction(word);
-        ////////////////////////////
+        // performWordAction(word);
+        ////////////////////////
         socketSend({event: 'said', body: term});
     }
     
-    var commands = {};
+    var commands = {
+        ':term' : word_matched
+    };
     
     /*for(var i=0; i<words.length; i++) {
 
@@ -101,7 +103,7 @@ function start_voice() {
         commands[word] = word_matched;
     }*/
     
-    commands[':term'] = word_matched;
+    //commands[':term'] = word_matched;
 
     // Add word commands to annyang
     annyang.addCommands(commands);
@@ -189,7 +191,9 @@ function sendGifBomb(gifName, target) {
     var gifBomb = getGifBombByName(gifName);
     for(var i=0; i<collectedGifBombs.length; i++) {
         if(gifName == collectedGifBombs[i].name) {
-            collectedGifBombs = collectedGifBombs.splice(i, 1);
+            alert("before splice: " + JSON.stringify(collectedGifBombs));
+            collectedGifBombs.splice(i, 1);
+            alert("after splice: " + JSON.stringify(collectedGifBombs));
             socketSend({event: 'gifBomb', body: {target: target, gifName: gifName}});
             console.log("sent Gif Bomb: " + gifName + " to " + target + "!!!");
             return;
@@ -209,7 +213,7 @@ function receiveGifBomb(gifName, fromPlayer) {
     document.getElementById("gifBomb").setAttribute("src", gifBomb.src);
     setTimeout(function(){
         document.getElementById("gifBomb").setAttribute("src", "");
-    }, 7000);
+    }, 9000);
     // ui display Gif fullscreen
     // also display who sent it
 }
