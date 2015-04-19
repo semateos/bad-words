@@ -2,34 +2,36 @@
 var socket = io();
 
 var words = [
-    {word:"supercalifragilisticexpialidocious", action:"gifBomb"},
-    {word:"penis", action:{type:"gifBomb", gifName:"cat"}},
-    {word:"nipple", action:{type:"gifBomb", gifName:"cat"}},
-    {word:"shocker", action:{type:"gifBomb", gifName:"cat"}},
-    {word:"dildo", action:{type:"gifBomb", gifName:"cat"}},
-    {word:"socket", action:{type:"gifBomb", gifName:"cat"}},
-    {word:"pickle", action:{type:"gifBomb", gifName:"cat"}},
-    {word:"stank", action:{type:"gifBomb", gifName:"cat"}},
-    {word:"twat", action:{type:"gifBomb", gifName:"cat"}},
-    {word:"snatch", action:{type:"gifBomb", gifName:"cat"}},
+    {word:"supercalifragilisticexpialidocious", action:{type:"gifBomb", gifName:"doubleRainbow"}},
+    {word:"penis", action:{type:"gifBomb", gifName:"bananaMan"}},
+    {word:"nipple", action:{type:"gifBomb", gifName:"stimpyButton"}},
+    {word:"shocker", action:{type:"gifBomb", gifName:"omgCat"}},
+    {word:"dildo", action:{type:"gifBomb", gifName:"rickRoll"}},
+    {word:"socket", action:{type:"gifBomb", gifName:"goodDay"}},
+    {word:"pickle", action:{type:"gifBomb", gifName:"sloMoFace"}},
+    {word:"stank", action:{type:"gifBomb", gifName:"recursiveSmiley"}},
+    {word:"twat", action:{type:"gifBomb", gifName:"freeFoodDog"}},
+    {word:"pussy", action:{type:"gifBomb", gifName:"keyboardCat"}},
+    {word:"snatch", action:{type:"gifBomb", gifName:"ronaldSmack"}},
+    {word:"skank", action:{type:"gifBomb", gifName:"trippyMan"}},
     {word:"thong", action:{type:"addPoints", numPoints: 3}},
     {word:"silly", action:{type:"addPoints", numPoints: 5}},
     {word:"spank", action:{type:"addPoints", numPoints: 2}}
 ];
 
 var gifBombs = [
-    {name:"cat", src:"img/cat.gif"},
-    {name:"cat", src:"img/cat.gif"},
-    {name:"cat", src:"img/cat.gif"},
-    {name:"cat", src:"img/cat.gif"},
-    {name:"cat", src:"img/cat.gif"},
-    {name:"cat", src:"img/cat.gif"},
-    {name:"cat", src:"img/cat.gif"},
-    {name:"cat", src:"img/cat.gif"},
-    {name:"cat", src:"img/cat.gif"},
-    {name:"cat", src:"img/cat.gif"},
-    {name:"cat", src:"img/cat.gif"},
-    {name:"cat", src:"img/cat.gif"}
+    {name:"bananaMan", src:"images/banana-man.gif"},
+    {name:"doubleRainbow", src:"images/double-rainbow.jpg"},
+    {name:"freeFoodDog", src:"images/free-food-dog.gif"},
+    {name:"goodDay", src:"images/good-day.gif"},
+    {name:"keyboardCat", src:"images/keyboard-cat.gif"},
+    {name:"omgCat", src:"images/omg-cat.gif"},
+    {name:"recursiveSmiley", src:"images/recursive-smiley.gif"},
+    {name:"rickRoll", src:"images/rick-roll.gif"},
+    {name:"ronaldSmack", src:"images/ronald-smack.gif"},
+    {name:"sloMoFace", src:"images/sloMoFace.gif"},
+    {name:"stimpyButton", src:"images/stimpy-button.gif"},
+    {name:"trippyMan", src:"images/trippy-man.gif"}
 ];
 
 var players = [
@@ -53,14 +55,24 @@ var currentPlayerTarget = null;
 var numPoints = 0;
 var me;
 
-start_voice();
+init();
+
+function init() {
+    start_voice();
+    
+    //////////////////////////
+    ///// For testing /////////
+    for(var i=0; i<gifBombs.length; i++) {
+        addGifBombToArsenal(gifBombs[i].name);
+    }
+    /////////////////////////
+}
 
 function start_voice() {
-
     // voice recognition
     annyang.start({ autoRestart: true });
     
-    //show speach debug
+    // show speech debug
     // annyang.debug();
     
     var word_matched = function(term) {
@@ -70,12 +82,11 @@ function start_voice() {
         var word = getWord(term);
 
         if(targetInCrosshairs == term) {
-
             performWordAction(word);
         }
 
         ////////////////////////////
-        /////// for testing ////////
+        /////// For testing ////////
         performWordAction(word);
         ////////////////////////////
         socketSend({event: 'said', body: term});
@@ -111,7 +122,7 @@ function performWordAction(word) {
         switch(word.action.type) {
 
             case "gifBomb":
-                sendGifBomb(word.action.gifName);
+                sendGifBomb(word.action.gifName, "all");
                 break;
 
             case "addPoints":
@@ -180,6 +191,7 @@ function sendGifBomb(gifName, target) {
         if(gifName == collectedGifBombs[i].name) {
             collectedGifBombs = collectedGifBombs.splice(i, 1);
             socketSend({event: 'gifBomb', body: {target: target, gifName: gifName}});
+            console.log("sent Gif Bomb: " + gifName + " to " + target + "!!!");
             return;
         }
     }
@@ -193,12 +205,13 @@ function addPoints(numPts) {
 }
 
 function receiveGifBomb(gifName, fromPlayer) {
-    for(var i=0; i<gifBombs.length; i++) {
-        if(gifName == gifBombs[i].name) {
-            // ui display Gif fullscreen
-            // also display who sent it
-        }
-    }
+    var gifBomb = getGifBombByName(gifName);
+    document.getElementById("gifBomb").setAttribute("src", gifBomb.src);
+    setTimeout(function(){
+        document.getElementById("gifBomb").setAttribute("src", "");
+    }, 7000);
+    // ui display Gif fullscreen
+    // also display who sent it
 }
 
 ////////////////////////////

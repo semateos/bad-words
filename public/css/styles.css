@@ -63,3 +63,28 @@ video{
   display: inline-block;
   margin-left: 5px;
 }
+
+#targetReticle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+    z-index: 101;
+}
+
+#gifBomb {
+    min-width: 100%;
+    min-height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    background-color: #000;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+    z-index: 102;
+}
