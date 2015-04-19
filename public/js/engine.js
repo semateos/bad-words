@@ -124,7 +124,7 @@ function performWordAction(word) {
                 break;
 
             case "addPoints":
-                setScore("add", word.action.numPoints);
+                setScore("add", me.name, word.action.numPoints);
                 break;
         }
     }
@@ -145,7 +145,7 @@ socket.on('message', function(message){
         me = getPlayerByName(message.body);
     break;
     case "playerScoreUpdate":
-        
+        setScore(message.body.method, message.body.playerName, message.body.score);
     break;
     case "removeCommand":
         removeCommand(message.body); // would be a commandName
@@ -164,16 +164,19 @@ socket.on('message', function(message){
 
 // ui functions
 
-function setScore(method, num) {
+function setScore(method, playerName, num) {
+    var player = getPlayerByName(playerName);
     if(method == "add"){
-        me.score += num
+        player.score += num
     } else if(method == "subtract"){
-        me.score -= num
+        player.score -= num
+    }
+    
+    if(player == me) {
+        socketSend({event: "playerScoreUpdate", body: {method: method, playerName: me.name, score: me.score}});
     }
     
     updateScoreboard();
-    
-    socketSend({event: 'playerScoreUpdate', body: {player: me, score: me.score}});
 }
 
 function addPlayerToScoreboard(player) {

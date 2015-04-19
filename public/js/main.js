@@ -263,7 +263,7 @@ function render(dt) {
 
   for ( var i = 0; i < intersects.length; i++ ) {
 
-    console.log('intersects', intersects);
+    // console.log('intersects', intersects);
 
     intersects[ i ].object.material.color.set( 0xff0000 );
     
