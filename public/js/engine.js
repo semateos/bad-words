@@ -208,9 +208,11 @@ function addPoints(numPts) {
 
 function receiveGifBomb(gifName, fromPlayer) {
     var gifBomb = getGifBombByName(gifName);
+    document.getElementById("gifBomb").style.display = "block";
     document.getElementById("gifBomb").setAttribute("src", gifBomb.src);
     setTimeout(function(){
         document.getElementById("gifBomb").setAttribute("src", "");
+        document.getElementById("gifBomb").style.display = "none";
     }, 9000);
     // ui display Gif fullscreen
     // also display who sent it
