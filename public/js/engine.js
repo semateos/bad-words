@@ -1,8 +1,8 @@
 var commandWord = "goodbye";
 annyang.addCommands({"hello": function(){alert("hi!");}});
-annyang.addCommands({"monkey": function(){alert("goodbye!");}});
 // annyang.addCommands({"hello": });
 annyang.start();
+annyang.addCommands({"monkey": function(){alert("goodbye!");}});
 
 var words = [
     {word:"word1", action:"bomb"},
@@ -122,5 +122,5 @@ function getPlayerByName(playerName) {
 }
 
 function removeCommand(commandWord) {
-    annyang.removeCommands(commandWord.toString());
+    annyang.removeCommands(commandWord);
 }
