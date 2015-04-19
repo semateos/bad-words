@@ -38,10 +38,18 @@ var players = [
     {name:"cat", avatar:"img/cat.png"}
 ];
 
+var colors = [
+    {name:"red", hex:""},
+    {name:"pink", hex:""},
+    {name:"green", hex:""},
+    {name:"blue", hex:""},
+    {name:"purple", hex:""},
+    {name:"yellow", hex:""},
+];
+
+var wordInCrosshairs = "";
 var collectedGifBombs = [];
-
-var currentPlayerTarget = players[0];
-
+var currentPlayerTarget = null;
 var me;
 
 init();
@@ -52,7 +60,24 @@ function init() {
     
     for(var i=0; i<words.length; i++) {
         var word = words[i].word
-        annyang.addCommands({[word]: function(){alert("word matched!");}});
+        /*annyang.addCommands({[word]: function(){
+            // idk how to bind the current words[i] variable to this function
+            
+            setTimeout(function(w) {
+                alert("the word: "+w);
+            }, 1, word);
+            
+            var handleWord = function(w){
+                var myWord = w;
+                alert("word matched! " + w);
+            };
+            
+            var boundHandleWord = handleWord.bind(this, words[i]);
+            boundHandleWord();
+            
+        }});*/
+        
+        annyang.addCommands({[word]: function(){alert("hi!")}, arguments:word[i]});
     }
     
     var greeting = function(term) {
@@ -96,10 +121,10 @@ socket.on('message', function(message){
     break;
     case "gifBomb":
         if(message.body.target == "all") {
-            receiveGifBomb(message.body.gifName); // would be a gifName
+            receiveGifBomb(message.body.gifName, message.body.fromPlayer); // would be a gifName
         } else {
             if (me == getPlayerByName(message.body.target)){
-                receiveGifBomb(message.body.gifName); // would be a gifName
+                receiveGifBomb(message.body.gifName, message.body.fromPlayer); // would be a gifName
             }
         }
     break;
@@ -117,6 +142,18 @@ function registerPlayers() {
     }
 }
 
+function targetInCrosshairs(target) {
+    if(target.type == "player"){
+        
+    } else if(target.type == "word"){
+        wordInCrosshairs = word;
+    }
+}
+
+function nothingInCrosshairs() {
+    wordInCrosshairs = "";
+}
+
 function addGifBombToArsenal(gifName) {
     var gifBomb = getGifBombByName(gifName);
     collectedGifBombs.push(gifBomb);
@@ -132,10 +169,11 @@ function sendGifBomb(gifName, target) {
     socketSend({event: 'gifBomb', body: {target: target, gifName: gifName}});
 }
 
-function receiveGifBomb(gifName) {
+function receiveGifBomb(gifName, fromPlayer) {
     for(var i=0; i<gifBombs.length; i++) {
         if(gifName == gifBombs[i].name) {
             // ui display Gif fullscreen
+            // also display who sent it
         }
     }
 }
