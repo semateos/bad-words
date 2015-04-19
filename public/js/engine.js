@@ -64,27 +64,35 @@ function start_voice() {
     annyang.debug();
     
     var word_matched = function(term) {
+        
         console.log('said:', term);
+
         var word = getWord(term);
+
         if(targetInCrosshairs == term) {
+
             performWordAction(word);
         }
+
         ////////////////////////////
         /////// for testing ////////
         performWordAction(word);
         ////////////////////////////
+
         socketSend({event: 'said', body: term});
     }
     
     var commands = {};
     
-    for(var i=0; i<words.length; i++) {
+    /*for(var i=0; i<words.length; i++) {
 
         var word = words[i].word;
 
         commands[word] = word_matched;
-    }
+    }*/
     
+    commands[':term'] = word_matched;
+
     // Add word commands to annyang
     annyang.addCommands(commands);
 }
@@ -98,13 +106,19 @@ function getWord(term) {
 }
 
 function performWordAction(word) {
-    switch(word.action.type) {
-    case "gifBomb":
-        sendGifBomb(word.action.gifName);
-    break;
-    case "addPoints":
-        addPoints(word.action.numPoints);
-    break;
+
+    if(word){
+
+        switch(word.action.type) {
+
+            case "gifBomb":
+                sendGifBomb(word.action.gifName);
+                break;
+
+            case "addPoints":
+                addPoints(word.action.numPoints);
+                break;
+        }
     }
 }
 

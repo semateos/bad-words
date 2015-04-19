@@ -27,6 +27,8 @@ function toggleVR(){
 
     VR = false;
 
+    camera.position.set(0, 0, 0);
+
     controls = new THREE.OrbitControls(camera, element);
     controls.rotateUp(Math.PI / 4);
     controls.target.set(
@@ -44,6 +46,8 @@ function toggleVR(){
 
     //if mobile device, user device orientation controls:
     if(window.DeviceOrientationEvent){
+
+      camera.position.set(0, 0, 0);
 
       //console.log('orientation');
       controls = new THREE.DeviceOrientationControls(camera, true);
@@ -142,11 +146,12 @@ function init() {
   );
   controls.noZoom = true;
   controls.noPan = true;
+  
   //controls.autoFollowMouse(true);
 
   //add light to the scene (this is red light)
-  var light = new THREE.HemisphereLight(0xff0000, 0x000000, 1);
-  scene.add(light);
+  //var light = new THREE.HemisphereLight(0xff0000, 0x000000, 1);
+  //scene.add(light);
 
   //add an object to the scene
   cube = new THREE.Mesh( new THREE.DodecahedronGeometry( 100 ), new THREE.MeshBasicMaterial( { color: 0xff00ff, wireframe: false } ));
@@ -190,8 +195,10 @@ function resize() {
   var height = container.offsetHeight;
 
   camera.aspect = width / height;
-  camera.updateProjectionMatrix();
+  //camera.position.set(0, 0, 0);
 
+  camera.updateProjectionMatrix();
+  
   renderer.setSize(width, height);
   effect.setSize(width, height);
 }
@@ -210,7 +217,7 @@ function render(dt) {
   time = clock.getElapsedTime();
 
   //cube.rotation.x += 0.02;
-  cube.rotation.y += 0.02;
+  //cube.rotation.y += 0.02;
   //cube.rotation.z += 0.02;
   //cube.position.x  = 100 + 20 * Math.sin(time * 3);
 
