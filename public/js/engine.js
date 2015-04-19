@@ -47,13 +47,6 @@ var me;
 
 start_voice();
 
-var say = function(term) {
-
-    console.log('said:', term);
-    // $console.text(term);
-    socketSend({event: 'chat', body: term});
-}
-
 
 function start_voice() {
 
