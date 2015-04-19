@@ -18,8 +18,8 @@ var WHICHKEY = undefined;
 var trixelData = undefined;
 
 //start three.js stuff
-//init();
-//animate();
+init();
+animate();
 
 //fullscreen();
 
@@ -178,11 +178,14 @@ function init() {
 
     //console.log('orientation');
 
+    /*
     controls = new THREE.DeviceOrientationControls(camera, true);
     controls.connect();
     controls.update();
-    
+    */
     //element.addEventListener('click', fullscreen, false);
+
+    console.log('device orientation');
   }
 
   var full_button = document.getElementById('fullscreen');
@@ -213,34 +216,6 @@ function init() {
     transparent: true
   });
 
-  // now create the individual particles
-  for (var p = 0; p < particleCount; p++) {
-
-    // create a particle with random
-    // position values, -250 -> 250
-    var pX = Math.random() * particleSystemHeight * 2 - particleSystemHeight,
-        pY = Math.random() * particleSystemHeight * 2 - particleSystemHeight,
-        pZ = Math.random() * particleSystemHeight * 2 - particleSystemHeight,
-        particle = new THREE.Vector3(pX, pY, pZ);
-
-        particle.velocity = new THREE.Vector3(
-          0,              // x
-          -Math.random() / 3, // y: random vel
-          0);             // z
-
-    // add it to the geometry
-    particles.vertices.push(particle);
-  }
-
-  // create the particle system
-  particleSystem = new THREE.PointCloud(
-      particles,
-      pMaterial);
-
-  particleSystem.sortParticles = true;
-
-  // add it to the scene
-  scene.add(particleSystem);
 
   //vsar text = new THREE.Mesh( new THREE.TextGeometry("Testing", {size: 20, height: 30}), new THREE.MeshNormalMaterial() );
   //scene.add( text );
@@ -262,6 +237,7 @@ function resize() {
 }
 
 function update(dt) {
+  
   resize();
 
   camera.updateProjectionMatrix();
@@ -291,35 +267,6 @@ function render(dt) {
   
   // simple billboard method
   //Trixelworld.quaternion.copy( camera.quaternion );
-
-  
-  var pCount = particleCount;
-  while (pCount--) {
-
-    // get the particle
-    var particle =
-      particles.vertices[pCount];
-
-    // check if we need to reset
-    if (particle.y < -1 * particleSystemHeight ) {
-      particle.y = particleSystemHeight;
-      particle.velocity.y = 0;
-    }
-
-    // update the velocity with
-    // a splat of randomniz
-    particle.velocity.y -= Math.random() * .05;
-
-    // and the position
-    particle.add(particle.velocity);
-  }
-
-  // flag to the particle system
-  // that we've changed its vertices.
-  particleSystem.
-    geometry.
-    __dirtyVertices = true;
-  
 
   effect.render(scene, camera);
 }

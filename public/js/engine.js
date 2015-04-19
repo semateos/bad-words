@@ -47,58 +47,37 @@ var colors = [
     {name:"yellow", hex:""},
 ];
 
-var wordInCrosshairs = "";
+var crosshairsTarget = "";
 var collectedGifBombs = [];
 var currentPlayerTarget = null;
 var me;
 
-init();
+start_voice();
 
-function init() {
+function start_voice() {
+
     // voice recognition
     annyang.start({ autoRestart: true });
     
-    for(var i=0; i<words.length; i++) {
-        var word = words[i].word
-        /*annyang.addCommands({[word]: function(){
-            // idk how to bind the current words[i] variable to this function
-            
-            setTimeout(function(w) {
-                alert("the word: "+w);
-            }, 1, word);
-            
-            var handleWord = function(w){
-                var myWord = w;
-                alert("word matched! " + w);
-            };
-            
-            var boundHandleWord = handleWord.bind(this, words[i]);
-            boundHandleWord();
-            
-        }});*/
-        
-        annyang.addCommands({[word]: function(){alert("hi!")}, arguments:word[i]});
-    }
-    
-    var greeting = function(term) {
-        console.log('say:', term);
-        // $console.text(term);
-        socketSend({event: 'chat', body: term});
-    }
-    
-    var commands = {
-      // By defining a part of the following command as optional, annyang will respond to both:
-      // "say hello to my little friend" as well as "say hello friend"
-      'say *term': greeting
-    };
-    
-    // Add our commands to annyang
-    
+    //show speach debug
     annyang.debug();
     
-    // Start listening. You can call this here, or attach this call to an event, button, etc.
+    var word_matched = function(term) {
+        console.log('said:', term);
+        socketSend({event: 'said', body: term});
+    }
+    
+    var commands = {};
+    
+    for(var i=0; i<words.length; i++) {
+
+        var word = words[i].word;
+
+        commands[word] = word_matched;
+    }
+    
+    // Add word commands to annyang
     annyang.addCommands(commands);
-    //annyang.start({ autoRestart: false, continuous: false });
 }
 
 
@@ -110,7 +89,7 @@ function socketSend(message){
 
 socket.on('message', function(message){
     switch(message.event) {
-    case "chat":
+    case "said":
         console.log("word received thru socket: " + message.body);
     break;
     case "setPlayer":
@@ -146,12 +125,12 @@ function targetInCrosshairs(target) {
     if(target.type == "player"){
         
     } else if(target.type == "word"){
-        wordInCrosshairs = word;
+        crosshairsTarget = target;
     }
 }
 
 function nothingInCrosshairs() {
-    wordInCrosshairs = "";
+    crosshairsTarget = "";
 }
 
 function addGifBombToArsenal(gifName) {
