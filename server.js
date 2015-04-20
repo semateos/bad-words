@@ -36,7 +36,7 @@ plugins = plugins.concat([
                     player.save();
                     
                     console.log('player connected as', player);
-                    socket.emit('message', {event: 'newPlayer', player: player});
+                    socket.emit('message', {event: 'welcomeMessage', player: player});
                     
                     db.players
                         .find({connected:true})

@@ -9,7 +9,8 @@ module.exports = {
         name: 'string',
         score: 'int',
         avatar: 'string',
-        rank: 'int'
+        rank: 'int',
+        position: 'json'
     },
     
 }

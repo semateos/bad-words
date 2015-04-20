@@ -16,7 +16,8 @@ var words = [
     {word:"skank", action:{type:"gifBomb", gifName:"trippyMan"}},
     {word:"thong", action:{type:"addPoints", numPoints: 3}},
     {word:"silly", action:{type:"addPoints", numPoints: 5}},
-    {word:"spank", action:{type:"addPoints", numPoints: 2}}
+    {word:"spank", action:{type:"addPoints", numPoints: 2}},
+    {word:"teleport", action:{type:"teleport"}}
 ];
 
 var gifBombs = [
@@ -105,12 +106,19 @@ function performWordAction(word) {
         switch(word.action.type) {
             case "gifBomb":
                 sendGifBomb(word.action.gifName, "all");
-                break;
+            break;
             case "addPoints":
                 updateScore(me.name, parseInt(me.score + word.action.numPoints));
-                break;
+            break;
+            case "teleport":
+                teleport();
+            break;
         }
     }
+}
+
+function teleport() {
+    
 }
 
 // multiplayer socket.io shit
@@ -121,7 +129,7 @@ function socketSend(message){
 
 socket.on('message', function(message){
     switch(message.event) {
-    case 'newPlayer':
+    case 'welcomeMessage':
         console.log('welcome '+ message.player.name + '!', message.player);
         addMyself(message.player);
     break;
@@ -129,9 +137,9 @@ socket.on('message', function(message){
         console.log('player list update', message.players);
         updatePlayers(message.players);
     break;
-    case 'playerPosition':
-        console.log('player position update', message.players);
-        updatePlayers(message.players);
+    case 'playerPositionUpdate':
+        console.log('player position update', message.player);
+        updatePlayerPosition(message.player);
     break;
     case "said":
         console.log("word received thru socket: " + message.body);
@@ -158,7 +166,7 @@ socket.on('message', function(message){
 
 function addMyself(myPlayer) {
     me = myPlayer;
-    addPlayerToScoreboard(me);
+    addPlayerToGame(me);
     var $meInScoreboard = getPlayerInScoreboardByName(me.name);
     $meInScoreboard.css({
         backgroundColor: "rgba(0, 255, 0, .4)"
@@ -166,17 +174,22 @@ function addMyself(myPlayer) {
     updateScoreboardRankings();
 }
 
+function updatePlayerPosition(player) {
+    updatePlayerAvatarPosition(player);
+}
+
 function updatePlayers(playerDbList) {
     for(var i=0; i<playerDbList.length; i++) {
         if(!getPlayerInScoreboardByName(playerDbList[i].name)) {
-            addPlayerToScoreboard(playerDbList[i]);
+            addPlayerToGame(playerDbList[i]);
         }
     }
     
     var numScoreboardChildren = $("#scoreboard").children().length;
     if(numScoreboardChildren > playerDbList.length) {
         for(var i=0; i<numScoreboardChildren; i++) {
-            var scoreboardName = $("#scoreboard").children().eq(i).find(".scoreboardPlayerName").html();
+            var $scoreboardElement = $("#scoreboard").children().eq(i);
+            var scoreboardName = $scoreboardElement.find(".scoreboardPlayerName").html();
             var nameInDb = false;
             for(var j=0; j<playerDbList.length; j++) {
                 if(playerDbList[j].name == scoreboardName){
@@ -184,24 +197,27 @@ function updatePlayers(playerDbList) {
                 }
             }
             if(!nameInDb) {
-                $("#scoreboard").children().eq(i).remove();
+                removePlayerFromGame(player, $scoreboardElement);
             }
         }
     }
+    
     updateScoreboardRankings();
 }
 
-function addPlayerToScoreboard(player) {
+function addPlayerToGame(player) {
     $("#scoreboard").append("<div data-rank='"+ player.rank +"' class='scoreboardPlayer'>"
                             +"<img class='scoreboardPlayerAvatar' src='"+ player.avatar +"'/>"
                             +"<div class='scoreboardPlayerName'>"+ player.name +"</div>"
                             +"<div class='scoreboardPlayerScore'>"+ player.score +"</div>"
                             +"</div>"
                            )
+    addPlayerAvatarToCanvas(player);
 }
 
-function removeElementFromScoreboard(player) {
-    
+function removePlayerFromGame(player, $scoreboardElement) {
+    $("#scoreboard").children().eq(i).remove();
+    removePlayerAvatarFromCanvas(player);
 }
 
 function updateScoreboardRankings() {
@@ -228,7 +244,6 @@ function updateScoreboardRankings() {
     }
     
     for(var i=0; i<playersInScoreboard.length; i++) {
-        ///// alert($("#scoreboard").children().eq(i));
         var singlePlayerHeight = $("#scoreboard").children().eq(0).height() + 10; // +10 for padding
         playersInScoreboard[i].element.animate({
             top: (singlePlayerHeight * i - 1)

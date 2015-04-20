@@ -196,6 +196,20 @@ function init() {
 
 }
 
+function addPlayerAvatarToCanvas(player) {
+    // grab player.position
+    // broadcast socketSend({event: "playerPositionUpdate", body: {playerName: me.name, position: newPosition}});
+}
+
+function removePlayerAvatarFromCanvas(player) {
+    
+}
+
+function updatePlayerAvatarPosition(player) {
+    
+}
+
+
 function resize() {
   var width = container.offsetWidth;
   var height = container.offsetHeight;
