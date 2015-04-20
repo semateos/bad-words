@@ -91,18 +91,31 @@ plugins = plugins.concat([
                         switch(message.event){
 
                             case 'playerScoreUpdate':
-
                                 db.players.findOne({socket: socket.id})
                                 .then(function(player) {
                                 
                                     player.score = message.body.score;
                                     player.save();
-
+                                    
                                     console.log('player score', player);
                                 });
 
                                 console.log('score update', message);
                                 break;
+                            case 'playerPositionUpdate':
+                                db.players.findOne({socket: socket.id})
+                                .then(function(player) {
+                                    
+                                    player.positionX = message.player.positionX;
+                                    player.positionY = message.player.positionY;
+                                    player.positionZ = message.player.positionZ;
+                                    player.save();
+                                    
+                                    console.log('player score', player);
+                                });
+
+                                console.log('position update', message);
+                            break;
 
                         }
 

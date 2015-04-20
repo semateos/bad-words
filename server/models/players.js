@@ -10,7 +10,9 @@ module.exports = {
         score: 'int',
         avatar: 'string',
         rank: 'int',
-        position: 'json'
+        positionX: 'float',
+        positionY: 'float',
+        positionZ: 'float'
     },
     
 }

@@ -162,7 +162,10 @@ function performWordAction(word) {
 }
 
 function teleport() {
-    
+    me.positionX = Math.random() * 500 - 250;
+    me.positionY = Math.random() * 500 - 250;
+    me.positionZ = Math.random() * 500 - 250;
+    socketSend({event: "playerPositionUpdate", player: me});
 }
 
 // multiplayer socket.io shit
@@ -211,6 +214,7 @@ socket.on('message', function(message){
 function addMyself(myPlayer) {
     me = myPlayer;
     addPlayerToGame(me);
+    teleport();
     var $meInScoreboard = getPlayerInScoreboardByName(me.name);
     $meInScoreboard.css({
         backgroundColor: "rgba(0, 255, 0, .4)"
@@ -219,7 +223,11 @@ function addMyself(myPlayer) {
 }
 
 function updatePlayerPosition(player) {
-    updatePlayerAvatarPosition(player);
+    console.log("player position update: " + player);
+    if(player.name != me.name) {
+        
+    }
+    // updatePlayerAvatarPosition(player);
 }
 
 function updatePlayers(playerDbList) {

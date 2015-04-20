@@ -179,7 +179,7 @@ function init() {
 
     group.box = box;
     group.text = text;
-
+    
     group.position.x = Math.random() * 500 - 250;
     group.position.y = Math.random() * 500 - 250;
     group.position.z = Math.random() * 500 - 250;
@@ -197,7 +197,6 @@ function init() {
 
 function addPlayerAvatarToCanvas(player) {
     // grab player.position
-    // broadcast socketSend({event: "playerPositionUpdate", body: {playerName: me.name, position: newPosition}});
 }
 
 function removePlayerAvatarFromCanvas(playerName) {
