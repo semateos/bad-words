@@ -60,7 +60,15 @@ function init() {
     for(var i=0; i<players.length; i++) {
         addPlayerToScoreboard(players[i]);
     }
+    
+    
+    
     me = getPlayerByName("Bill");
+    var $meInScoreboard = getPlayerInScoreboardByName(me.name);
+    $meInScoreboard.css({
+        backgroundColor: "rgba(0, 255, 0, .4)"
+    });
+    
     updateScoreboard(true);
 }
 
@@ -198,7 +206,7 @@ function updateScoreboard(appStart) {
     }
     
     var flagAnimateUpdateScoreboard = false;
-    var playerRankingsBeforeSorting = players;
+    var playerRankingsBeforeSorting = players.slice(0);
     
     players.sort(function(player1, player2) {
         // Ascending: first score less than the previous
@@ -223,7 +231,7 @@ function updateScoreboard(appStart) {
             var singlePlayerHeight = $("#scoreboard").children().eq(0).height() + 10; // +10 for padding
             getPlayerInScoreboardByName(players[i].name).animate({
                 top: (singlePlayerHeight * i - 1)
-            }, 800);
+            }, 500);
         }
     }
 }
