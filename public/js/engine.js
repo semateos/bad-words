@@ -146,7 +146,7 @@ function setMyPlayer() {
 function addMyselfToPlayers(randAvatar) {
     me = {name:randAvatar.name, avatar:randAvatar.src, score:0, rank:players.length}
     players.push(me);
-    socketSend({event: 'newPlayer', body:{
+    socketSend({event: 'addNewPlayer', body:{
         name: me.name,
         avatar: me.avatar,
         score: me.score,
@@ -230,6 +230,14 @@ function performWordAction(word) {
 
 // multiplayer socket.io shit
 
+function getPlayersFromDb() {
+    
+}
+
+function addMeToDb() {
+    
+}
+
 function socketSend(message){
     socket.emit('message', message);
 }
@@ -260,7 +268,7 @@ socket.on('message', function(message){
             }
         }
     break;
-    case "newPlayer":
+    case "addNewPlayer":
         if(message.body.name != me.name){
             var player = {
                 name: message.body.name,
@@ -389,12 +397,10 @@ function addGifBombToArsenal(gifName) {
 function sendGifBomb(gifName, target) {
     var gifBomb = getGifBombByName(gifName);
     
-    /////////////////////////////
-    ////// For testing //////////
     socketSend({event: 'gifBomb', body: {target: target, gifName: gifName}});
     console.log("sent Gif Bomb: " + gifName + " to " + target + "!!!");
+    setScore("add", me.name, 3);
     return;
-    /////////////////////////////
     
     for(var i=0; i<collectedGifBombs.length; i++) {
         if(gifName == collectedGifBombs[i].name) {
