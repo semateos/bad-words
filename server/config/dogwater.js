@@ -14,7 +14,6 @@ module.exports = {
 						name: 'Alien',
 						score: 0,
                         avatar: 'images/avatar-alien.png',
-                        rank: 1,
 						connected: false
 				    },
 				    {
@@ -22,7 +21,6 @@ module.exports = {
 						name: 'Ballmer',
 						score: 0,
                         avatar: 'images/avatar-ballmer.png',
-                        rank: 2,
 						connected: false
 				    },
                     {
@@ -30,7 +28,6 @@ module.exports = {
 						name: 'Beiber',
 						score: 0,
                         avatar: 'images/avatar-beiber.png',
-                        rank: 3,
 						connected: false
 				    },
                     {
@@ -38,7 +35,6 @@ module.exports = {
 						name: 'Betty',
 						score: 0,
                         avatar: 'images/avatar-betty.png',
-                        rank: 4,
 						connected: false
 				    },
                     {
@@ -46,7 +42,6 @@ module.exports = {
 						name: 'Busey',
 						score: 0,
                         avatar: 'images/avatar-busey.png',
-                        rank: 5,
 						connected: false
 				    },
                     {
@@ -54,7 +49,6 @@ module.exports = {
 						name: 'Georgio',
 						score: 0,
                         avatar: 'images/avatar-georgio.png',
-                        rank: 6,
 						connected: false
 				    },
                     {
@@ -62,7 +56,6 @@ module.exports = {
 						name: 'Hillary',
 						score: 0,
                         avatar: 'images/avatar-hillary.png',
-                        rank: 7,
 						connected: false
 				    },
                     {
@@ -70,7 +63,6 @@ module.exports = {
 						name: 'Kramer',
 						score: 0,
                         avatar: 'images/avatar-kramer.png',
-                        rank: 8,
 						connected: false
 				    },
                     {
@@ -78,7 +70,6 @@ module.exports = {
 						name: 'Michael',
 						score: 0,
                         avatar: 'images/avatar-michael.png',
-                        rank: 9,
 						connected: false
 				    },
                     {
@@ -86,7 +77,6 @@ module.exports = {
 						name: 'Mimi',
 						score: 0,
                         avatar: 'images/avatar-mimi.png',
-                        rank: 10,
 						connected: false
 				    },
                     {
@@ -94,7 +84,6 @@ module.exports = {
 						name: 'Ohmy',
 						score: 0,
                         avatar: 'images/avatar-ohmy.png',
-                        rank: 11,
 						connected: false
 				    },
                     {
@@ -102,7 +91,6 @@ module.exports = {
 						name: 'Old Man',
 						score: 0,
                         avatar: 'images/avatar-oldman.png',
-                        rank: 12,
 						connected: false
 				    },
                     {
@@ -110,7 +98,6 @@ module.exports = {
 						name: 'Oprah',
 						score: 0,
                         avatar: 'images/avatar-oprah.png',
-                        rank: 13,
 						connected: false
 				    },
                     {
@@ -118,7 +105,6 @@ module.exports = {
 						name: 'Peter',
 						score: 0,
                         avatar: 'images/avatar-peter.png',
-                        rank: 14,
 						connected: false
 				    },
                     {
@@ -126,7 +112,6 @@ module.exports = {
 						name: 'Trump',
 						score: 0,
                         avatar: 'images/avatar-trump.png',
-                        rank: 15,
 						connected: false
 				    },
 				]

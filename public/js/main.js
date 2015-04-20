@@ -196,6 +196,16 @@ function init() {
 
 }
 
+function addPlayerAvatarToCanvas(player) {
+    // grab player.position
+    // broadcast 
+}
+
+function removePlayerAvatarFromCanvas(player) {
+    
+}
+
+
 function resize() {
   var width = container.offsetWidth;
   var height = container.offsetHeight;
