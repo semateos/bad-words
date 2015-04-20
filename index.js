@@ -21,7 +21,7 @@ exports.register = function(plugin, options, next) {
 
 	    reply();
     });
-
+    
     // Make sure DB is available
     plugin.dependency('dogwater');
     

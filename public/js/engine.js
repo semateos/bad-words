@@ -1,6 +1,24 @@
 
 var socket = io();
 
+var playerAvatars = [
+    {name:"Alien", src:"images/avatar-alien.png"},
+    {name:"Ballmer", src:"images/avatar-ballmer.png"},
+    {name:"Beiber", src:"images/avatar-beiber.png"},
+    {name:"Betty", src:"images/avatar-betty.png"},
+    {name:"Busey", src:"images/avatar-busey.png"},
+    {name:"Georgio", src:"images/avatar-georgio.png"},
+    {name:"Hillary", src:"images/avatar-hillary.png"},
+    {name:"Kramer", src:"images/avatar-kramer.png"},
+    {name:"Michael", src:"images/avatar-michael.png"},
+    {name:"Mimi", src:"images/avatar-mimi.png"},
+    {name:"Oh My", src:"images/avatar-ohmy.png"},
+    {name:"Old Man", src:"images/avatar-oldman.png"},
+    {name:"Oprah", src:"images/avatar-oprah.png"},
+    {name:"Peter", src:"images/avatar-peter.png"},
+    {name:"Trump", src:"images/avatar-trump.png"}
+];
+
 var words = [
     {word:"supercalifragilisticexpialidocious", action:{type:"gifBomb", gifName:"bananaMan"}},
     {word:"penis", action:{type:"gifBomb", gifName:"bananaMan"}},
@@ -33,11 +51,7 @@ var gifBombs = [
     {name:"trippyMan", src:"images/trippy-man.gif"}
 ];
 
-var players = [
-    {name:"Sam", avatar:"images/avatar-kramer.png", score:10, rank:1},
-    {name:"Drew", avatar:"images/avatar-michael.png", score:20, rank:2},
-    {name:"Bill", avatar:"images/avatar-peter.png", score:30, rank:3}
-];
+var players = [];
 
 var colors = [
     {name:"pink", hex:""},
@@ -51,24 +65,120 @@ var crosshairsTarget = "";
 var collectedGifBombs = [];
 var currentPlayerTarget = null;
 var playerScore = 0;
+var requestingPlayers;
+var requestId;
+var playerRequestTimeout;
 var me;
 
 init();
 
 function init() {
     start_voice();
-    for(var i=0; i<players.length; i++) {
-        addPlayerToScoreboard(players[i]);
+    /*
+    name: request.name,
+                score: request.score,
+                rank: request.rank,
+                scoreboardAvatar: request.scoreboardAvatar,
+                worldAvatar: request.worldAvatar
+    */
+    
+    /*
+    $.ajax({
+        url: "/api/players/addPlayer",
+        method: "POST",
+        data: {
+            name: "Bill",
+            score: 10,
+            rank: 1,
+            avatar: "images/avatar-peter.png",
+        },
+        success: function(data){
+            alert(JSON.stringify(data));
+        }
+    });
+    */
+    getPlayersInGame();
+}
+
+function getPlayersInGame() {
+    requestingPlayers = true;
+    requestId = Math.random();
+    socketSend({event: 'playerRequest', body:{requestId: requestId}});
+    playerRequestTimeout = setTimeout(function(){
+        requestingPlayers = false;
+        setMyPlayer();
+    }, 2000);
+}
+
+function addPlayerToList(player) {
+    players.push(player);
+    addPlayerToScoreboard(player);
+    
+    clearTimeout(playerRequestTimeout);
+    playerRequestTimeout = setTimeout(function(){
+        requestingPlayers = false;
+        setMyPlayer();
+    }, 2000);
+}
+
+function setMyPlayer() {
+    // $.ajax("/api/players/getPlayers").done(function(data){
+    var flag1RandomFound = false;
+    var randomName;
+    var randomAvatar;
+    
+    pickRandomNameAndCheck();
+    pickRandomAvatarAndCheck();
+    
+    function pickRandomNameAndCheck() {
+        var randomIndex = Math.floor(Math.random() * playerNames.length);
+        
+        for(var i=0; i<players.length; i++) {
+            if(players[i].name == playerNames[randomIndex]){
+                pickRandomNameAndCheck();
+                return;
+            }
+        }
+        randomName = playerNames[randomIndex];
+        if(flag1RandomFound) {
+            addMyselfToPlayers(randomName, randomAvatar);
+        }
+        flag1RandomFound = true;
     }
+
+    function pickRandomAvatarAndCheck() {
+        var randomIndex = Math.floor(Math.random() * playerAvatars.length);
+        for(var i=0; i<players.length; i++) {
+            if(players[i].name == playerAvatars[randomIndex]){
+                pickRandomNameAndCheck();
+                return;
+            }
+        }
+        randomAvatar = playerAvatars[randomIndex];
+        if(flag1RandomFound) {
+            addMyselfToPlayers(randomName, randomAvatar);
+        }
+        flag1RandomFound = true;
+    }
+    // });
+}
+
+function addMyselfToPlayers(randName, randAvatar) {
+    me = {name:randName, avatar:randAvatar, score:0, rank:players.length}
+    players.push(me);
+    socketSend({event: 'newPlayer', body:{
+        name: me.name,
+        avatar: me.avatar,
+        score: me.score,
+        rank: me.rank
+    }});
     
+    addPlayerToScoreboard(me);
     
-    
-    me = getPlayerByName("Bill");
     var $meInScoreboard = getPlayerInScoreboardByName(me.name);
     $meInScoreboard.css({
         backgroundColor: "rgba(0, 255, 0, .4)"
     });
-    
     updateScoreboard(true);
 }
 
@@ -146,6 +256,30 @@ function socketSend(message){
 
 socket.on('message', function(message){
     switch(message.event) {
+    case "playerRequest":
+        if(!requestingPlayers) {
+            socketSend({event: 'playerInfo', body:{
+                name: me.name,
+                avatar: me.avatar,
+                score: me.score,
+                rank: me.rank,
+                requestId: event.body.requestId
+            }});
+        }
+    break;
+    case "playerInfo":
+        if(requestingPlayers) {
+            if(requestId == event.body.requestId){
+                var player = {
+                    name: message.body.name,
+                    avatar: message.body.avatar,
+                    score: message.body.score,
+                    rank: message.body.rank
+                }
+                addPlayerToList(player);
+            }
+        }
+    break;
     case "said":
         console.log("word received thru socket: " + message.body);
     break;
@@ -193,7 +327,8 @@ function addPlayerToScoreboard(player) {
                             +"<div class='scoreboardPlayerName'>"+ player.name +"</div>"
                             +"<div class='scoreboardPlayerScore'>0</div>"
                             +"</div>"
-                           )}
+                           )
+}
 
 function updateScoreboard(appStart) {
     for(var i=0; i<players.length; i++) {
@@ -228,6 +363,7 @@ function updateScoreboard(appStart) {
     }
     if(flagAnimateUpdateScoreboard || appStart) {
         for(var i=0; i<players.length; i++) {
+            ///// alert($("#scoreboard").children().eq(i));
             var singlePlayerHeight = $("#scoreboard").children().eq(0).height() + 10; // +10 for padding
             getPlayerInScoreboardByName(players[i].name).animate({
                 top: (singlePlayerHeight * i - 1)
@@ -320,6 +456,7 @@ function getPlayerInScoreboardByName(playerName) {
             return childAtIndex;
         }
     }
+    return 0;
 }
 
 function getPlayerByName(playerName) {
