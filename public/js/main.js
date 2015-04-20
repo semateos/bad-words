@@ -168,7 +168,7 @@ function init() {
     var group = new THREE.Object3D();//create an empty container
 
     var text_geo = new THREE.TextGeometry(word.word, {size: 20, height: 1, font: 'gentilis'});
-    var text = new THREE.Mesh( text_geo, new THREE.MeshLambertMaterial({color: 0x00ff00}) );
+    var text = new THREE.Mesh( text_geo, new THREE.MeshLambertMaterial({color: 0x00ff00, transparent: true}) );
 
     var box = new THREE.BoundingBoxHelper( text, 0x00ff00 );
     box.visible = false;
@@ -245,14 +245,19 @@ function render(dt) {
 
       particles[i].box.explode--;
 
+
+      particles[i].text.material.color.set( 0xff0000 );
+
       particles[i].box.object.material.wireframe = true;
 
-      //particles[i].scale.set( particles[i].scale.x * 1.02,particles[i].scale.y * 1.02, particles[i].scale.z * 1.02);
+      particles[i].scale.set( particles[i].scale.x * 0.99,particles[i].scale.y * 0.99, particles[i].scale.z * 0.99);
 
-      //particles[i].text.material.opacity -= 0.1;
+      particles[i].text.material.opacity -= 0.01;
 
       
     }else if(particles[i].box.intersected && particles[i].box.intersected > 0){
+
+      particles[i].text.material.color.set( 0xff0000 );
 
       particles[i].box.intersected--;
 
@@ -279,12 +284,13 @@ function render(dt) {
   for ( var i = 0; i < intersects.length; i++ ) {
 
     // console.log('intersects', intersects);
+    if(!intersects[ i ].object.explode){
 
-    intersects[ i ].object.object.material.color.set( 0xff0000 );
-    
-    intersects[ i ].object.intersected = 300;
+      //intersects[ i ].object.explode = 300;
 
-    //intersects[ i ].object.explode = 300;
+      intersects[ i ].object.intersected = 300;
+
+    }
   }
 
   if(VR){
