@@ -247,9 +247,9 @@ function render(dt) {
 
       particles[i].box.object.material.wireframe = true;
 
-      particles[i].scale.set( particles[i].scale.x * 1.02,particles[i].scale.y * 1.02, particles[i].scale.z * 1.02);
+      //particles[i].scale.set( particles[i].scale.x * 1.02,particles[i].scale.y * 1.02, particles[i].scale.z * 1.02);
 
-      particles[i].text.material.opacity -= 0.1;
+      //particles[i].text.material.opacity -= 0.1;
 
       
     }else if(particles[i].box.intersected && particles[i].box.intersected > 0){
@@ -284,7 +284,7 @@ function render(dt) {
     
     intersects[ i ].object.intersected = 300;
 
-    intersects[ i ].object.explode = 300;
+    //intersects[ i ].object.explode = 300;
   }
 
   if(VR){
