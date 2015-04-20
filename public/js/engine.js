@@ -124,6 +124,7 @@ function start_voice() {
         var word = getWord(term);
         
         if(word && word == "teleport") {
+            
             teleport();
         }
         
