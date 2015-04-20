@@ -43,41 +43,5 @@ module.exports = {
             
             */
         }
-    },
-    
-    click: {
-        handler: function(request, reply){
-            // Grab the DB from dogwater
-            var db = request.server.plugins['dogwater'];
-            
-            // Look for Stimpy in the cats model, placed there as a fixture
-            // add a click to Stimpy
-            db.cats.findOne(1).then(function(cat) {
-                
-                cat.clicks++;
-                
-                cat.save();
-
-                reply({clicks: cat.clicks});
-            });
-            
-        }
-    },
-    
-    count: {
-        handler: function(request, reply){
-
-            // Grab the DB from dogwater
-            var db = request.server.plugins['dogwater'];
-            
-            // Look for Stimpy in the cats model, placed there as a fixture
-            db.cats.findOne(1)
-            .then(function(cat) {
-            
-                // Reply with the number of clicks on Stimpy
-                reply({clicks: cat.clicks});
-                
-            });
-        }
     }
 }

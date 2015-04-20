@@ -4,19 +4,10 @@ module.exports = {
     index: {
         handler: function(request, reply){
             
-            // Grab the DB from dogwater
-            var db = request.server.plugins['dogwater'];
             
-            // Look for Stimpy in the cats model, placed there as a fixture
-            db.cats.findOne(1)
-            .then(function(cat) {
-            
-                // Render the view with the custom greeting to Stimpy
-                reply.view('index', {
-                    title: cat.name + ', you eediot!'
-                });
-                
-            });
+            // Render the view with the custom greeting to Stimpy
+            reply.view('index', {});
+         
             
         }
     },
