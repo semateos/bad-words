@@ -22,16 +22,16 @@ var words = [
     
     // bombs
     
-    {name:"awesome", action:{type:"gifBomb", gifName:"awesome"}},
-    {name:"balloon", action:{type:"gifBomb", gifName:"balloon"}},
-    {name:"banana", action:{type:"gifBomb", gifName:"banana"}},
-    {name:"butter", action:{type:"gifBomb", gifName:"butter"}},
-    {name:"button", action:{type:"gifBomb", gifName:"button"}},
-    {name:"cookies", action:{type:"gifBomb", gifName:"cookies"}},
-    {name:"keyboard", action:{type:"gifBomb", gifName:"keyboard"}},
-    {name:"llama", action:{type:"gifBomb", gifName:"llama"}},
-    {name:"sneeze", action:{type:"gifBomb", gifName:"sneeze"}},
-    {name:"umbrella", action:{type:"gifBomb", gifName:"umbrella"}},
+    {word:"awesome", action:{type:"gifBomb", gifName:"awesome"}},
+    {word:"balloon", action:{type:"gifBomb", gifName:"balloon"}},
+    {word:"banana", action:{type:"gifBomb", gifName:"banana"}},
+    {word:"butter", action:{type:"gifBomb", gifName:"butter"}},
+    {word:"button", action:{type:"gifBomb", gifName:"button"}},
+    {word:"cookies", action:{type:"gifBomb", gifName:"cookies"}},
+    {word:"keyboard", action:{type:"gifBomb", gifName:"keyboard"}},
+    {word:"llama", action:{type:"gifBomb", gifName:"llama"}},
+    {word:"sneeze", action:{type:"gifBomb", gifName:"sneeze"}},
+    {word:"umbrella", action:{type:"gifBomb", gifName:"umbrella"}},
     
     // point words
     {word:"supercalifragilisticexpialidocious", action:{type:"addPoints", numPoints: 34}},

@@ -154,47 +154,65 @@ function init() {
 
   controls.autoFollowMouse(true);
 
-  //add light to the scene (this is red light)
+  //add light to the scene
   var light = new THREE.HemisphereLight(0xffff00, 0x000000, 1);
   scene.add(light);
 
   particles = [];
   boxes = [];
 
-  for(var i = 0; i < words.length; i++){
+  for(var i = 0; i < 20; i++){
 
-    var word = words[i];
+    var word = words[Math.floor(Math.random() * words.length)];
 
-    var group = new THREE.Object3D();//create an empty container
-
-    var text_geo = new THREE.TextGeometry(word.word, {size: 20, height: 1, font: 'gentilis'});
-    var text = new THREE.Mesh( text_geo, new THREE.MeshLambertMaterial({color: 0x00ff00, transparent: true}) );
-
-    var box = new THREE.BoundingBoxHelper( text, 0x00ff00 );
-    box.visible = false;
-    box.word = word;
-    box.update(); 
-    
-    group.add( text );
-    group.add( box );
-
-    group.box = box;
-    group.text = text;
-    
-    group.position.x = Math.random() * 500 - 250;
-    group.position.y = Math.random() * 500 - 250;
-    group.position.z = Math.random() * 500 - 250;
-    
-    particles[i] = group;
-    boxes[i] = box;
-
-    word.particle = particles[i];
-
-    scene.add( group );
-
+    addWordToCloud(word);
+  
   }
     
-    addPlayerAvatarToCanvas();
+  addPlayerAvatarToCanvas();
+
+}
+
+function addWordToCloud(word, vector){
+
+  var group = new THREE.Object3D();//create an empty container
+
+  var text_geo = new THREE.TextGeometry(word.word, {size: 20, height: 1, font: 'gentilis'});
+  var text = new THREE.Mesh( text_geo, new THREE.MeshLambertMaterial({color: 0x00ff00, transparent: true}) );
+
+  var box = new THREE.BoundingBoxHelper( text, 0x00ff00 );
+  box.visible = false;
+  box.word = word;
+  box.update(); 
+  
+  group.add( text );
+  group.add( box );
+
+  group.box = box;
+  group.text = text;
+  
+  group.position.x = Math.random() * 500 - 250;
+  group.position.y = Math.random() * 500 - 250;
+  group.position.z = Math.random() * 500 - 250;
+  
+  if(vector){
+
+    group.vector = vector;
+
+  }else{
+
+    group.vector = new THREE.Vector3( (Math.random() - 1)/10, (Math.random() - 1)/10, (Math.random() - 1)/10);
+  }
+
+  var i = particles.length;
+  particles[i] = group;
+  
+  box.i = boxes.length;
+  boxes[box.i] = box;
+
+  word.particle = particles[i];
+
+  scene.add( group );
 
 }
 
@@ -203,6 +221,8 @@ function getAvatarFromParticlesByName(avatarName) {
 }
 
 function addPlayerAvatarToCanvas(player) {
+    
+
     // grab player.position
     if(typeof player == "undefined"){
         player = {};
@@ -233,12 +253,15 @@ function addPlayerAvatarToCanvas(player) {
         group.avatar = avatar;
         group.name = player.name;
 
-        group.position.x = Math.random() * 200 - 100;
-        group.position.y = Math.random() * 200 - 100;
-        group.position.z = Math.random() * 200 - 100;
+        group.position.x = Math.random() * 500 - 250;
+        group.position.y = Math.random() * 500 - 250;
+        group.position.z = Math.random() * 500 - 250;
 
-        particles[particles.length] = group;
-        boxes[boxes.length] = box;
+        //particles[particles.length] = group;
+    
+        box.i = boxes.length;
+        boxes[box.i] = box;
+
         avatars.push(group);
         scene.add(group);
     }
@@ -289,51 +312,53 @@ function render(dt) {
   // text.quaternion.copy( camera.quaternion );
   for(var i=0; i< avatars.length; i++) {
         avatars[i].quaternion.copy( camera.quaternion );
-        avatars[i].position.x -= 0.02;
-        avatars[i].position.y -= 0.02;
-        avatars[i].position.z -= 0.02;
+        //avatars[i].position.x -= 0.02;
+        //avatars[i].position.y -= 0.02;
+        //avatars[i].position.z -= 0.02;
   }
 
-  for(i = 0; i < words.length; i++){
+  for(i = 0; i < particles.length; i++){
 
-    particles[i].quaternion.copy( camera.quaternion );
+    if(particles[i]){
 
-    particles[i].position.x -= 0.02;
-    particles[i].position.y -= 0.02;
-    particles[i].position.z -= 0.02;
+      particles[i].quaternion.copy( camera.quaternion );
 
+      particles[i].position.add(particles[i].vector);
 
-    if(particles[i].box.explode > 0){
+      if(particles[i].explode > 0){
 
-      particles[i].box.explode--;
+        particles[i].explode--;
 
+        particles[i].text.material.color.set( 0xff0000 );
 
-      particles[i].text.material.color.set( 0xff0000 );
+        particles[i].box.object.material.wireframe = true;
 
-      particles[i].box.object.material.wireframe = true;
+        particles[i].scale.set( particles[i].scale.x * 0.99,particles[i].scale.y * 0.99, particles[i].scale.z * 0.99);
 
-      particles[i].scale.set( particles[i].scale.x * 0.99,particles[i].scale.y * 0.99, particles[i].scale.z * 0.99);
+        particles[i].text.material.opacity -= 0.01;
 
-      particles[i].text.material.opacity -= 0.01;
+        if(particles[i].explode <= 0){
 
-      
-    }else if(particles[i].box.intersected && particles[i].box.intersected > 0){
+          scene.remove(particles[i]);
 
-      particles[i].text.material.color.set( 0xff0000 );
+          delete(particles[i]);
 
-      particles[i].box.intersected--;
+          delete(bozes[particles[i].box.i]);
+        }
+        
+      }else if(particles[i].box.intersected && particles[i].box.intersected > 0){
 
-    }else{
+        particles[i].text.material.color.set( 0xff0000 );
 
-      particles[i].box.intersected = false;
+        particles[i].box.intersected--;
 
-      particles[i].box.object.material.color.set( 0x00ff00 );
+      }else{
+
+        particles[i].box.intersected = false;
+
+        particles[i].box.object.material.color.set( 0x00ff00 );
+      }
     }
-
-
-
-
-    
   }
 
 
