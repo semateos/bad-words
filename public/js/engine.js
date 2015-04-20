@@ -2,6 +2,8 @@
 var socket = io();
 
 var words = [
+    // bombs
+    {word:"teleport", action:{type:"teleport"}},
     {word:"supercalifragilisticexpialidocious", action:{type:"gifBomb", gifName:"bananaMan"}},
     {word:"penis", action:{type:"gifBomb", gifName:"bananaMan"}},
     {word:"nipple", action:{type:"gifBomb", gifName:"stimpyButton"}},
@@ -14,10 +16,52 @@ var words = [
     {word:"pussy", action:{type:"gifBomb", gifName:"keyboardCat"}},
     {word:"snatch", action:{type:"gifBomb", gifName:"ronaldSmack"}},
     {word:"skank", action:{type:"gifBomb", gifName:"trippyMan"}},
-    {word:"thong", action:{type:"addPoints", numPoints: 3}},
-    {word:"silly", action:{type:"addPoints", numPoints: 5}},
-    {word:"spank", action:{type:"addPoints", numPoints: 2}},
-    {word:"teleport", action:{type:"teleport"}}
+    {word:"thong", action:{type:"gifBomb", gifName:"freeFoodDog"}},
+    {word:"silly", action:{type:"gifBomb", gifName:"trippyMan"}},
+    {word:"spank", action:{type:"gifBomb", gifName:"stimpyButton"}},
+    
+    // point words
+    {word:"caboodle", action:{type:"addPoints", numPoints: 5}},
+    {word:"banana", action:{type:"addPoints", numPoints: 5}},
+    {word:"epiglottis", action:{type:"addPoints", numPoints: 5}},
+    {word:"bumfuzzle", action:{type:"addPoints", numPoints: 5}},
+    {word:"collywobbles", action:{type:"addPoints", numPoints: 5}},
+    {word:"goomba", action:{type:"addPoints", numPoints: 5}},
+    {word:"bumbershoot", action:{type:"addPoints", numPoints: 5}},
+    {word:"monkey", action:{type:"addPoints", numPoints: 5}},
+    {word:"nincompoop", action:{type:"addPoints", numPoints: 5}},
+    {word:"stinkpot", action:{type:"addPoints", numPoints: 5}},
+    {word:"kazoo", action:{type:"addPoints", numPoints: 5}},
+    {word:"squabble", action:{type:"addPoints", numPoints: 5}},
+    {word:"crusty", action:{type:"addPoints", numPoints: 5}},
+    {word:"toejam", action:{type:"addPoints", numPoints: 5}},
+    {word:"lollygag", action:{type:"addPoints", numPoints: 5}},
+    {word:"slurpee", action:{type:"addPoints", numPoints: 5}},
+    {word:"bloated", action:{type:"addPoints", numPoints: 5}},
+    {word:"dongle", action:{type:"addPoints", numPoints: 5}},
+    {word:"giblets", action:{type:"addPoints", numPoints: 5}},
+    {word:"orangutan", action:{type:"addPoints", numPoints: 5}},
+    {word:"nugget", action:{type:"addPoints", numPoints: 5}},
+    {word:"persnickety", action:{type:"addPoints", numPoints: 5}},
+    {word:"pipsqueak", action:{type:"addPoints", numPoints: 5}},
+    {word:"shenanigans", action:{type:"addPoints", numPoints: 5}},
+    {word:"supercilious", action:{type:"addPoints", numPoints: 5}},
+    {word:"zamboni", action:{type:"addPoints", numPoints: 5}},
+    {word:"schmutz", action:{type:"addPoints", numPoints: 5}},
+    {word:"guacamole", action:{type:"addPoints", numPoints: 5}},
+    {word:"dangler", action:{type:"addPoints", numPoints: 5}},
+    {word:"snickerdoodle", action:{type:"addPoints", numPoints: 5}},
+    {word:"fart", action:{type:"addPoints", numPoints: 5}},
+    {word:"cheese", action:{type:"addPoints", numPoints: 5}},
+    {word:"stinkbomb", action:{type:"addPoints", numPoints: 5}},
+    {word:"bunion", action:{type:"addPoints", numPoints: 5}},
+    {word:"bladder", action:{type:"addPoints", numPoints: 5}},
+    {word:"ukulele", action:{type:"addPoints", numPoints: 5}},
+    {word:"greasy", action:{type:"addPoints", numPoints: 5}},
+    {word:"stanky", action:{type:"addPoints", numPoints: 20}},
+    {word:"Narwhal", action:{type:"addPoints", numPoints: 5}},
+    {word:"slimy", action:{type:"addPoints", numPoints: 5}},
+    {word:"sourpuss", action:{type:"addPoints", numPoints: 5}}
 ];
 
 var gifBombs = [
