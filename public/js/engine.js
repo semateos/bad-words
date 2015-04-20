@@ -110,7 +110,13 @@ function getPlayersInGame() {
     }, 2000);
 }
 
-function addPlayerToList(player) {
+function addNewPlayerToList(player) {
+    players.push(player);
+    addPlayerToScoreboard(player);
+    updateScoreboard();
+}
+
+function addRequestedPlayerToList(player) {
     players.push(player);
     addPlayerToScoreboard(player);
     
@@ -118,34 +124,13 @@ function addPlayerToList(player) {
     playerRequestTimeout = setTimeout(function(){
         requestingPlayers = false;
         setMyPlayer();
-    }, 2000);
+    }, 800);
+    updateScoreboard();
 }
 
 function setMyPlayer() {
-    // $.ajax("/api/players/getPlayers").done(function(data){
-    var flag1RandomFound = false;
-    var randomName;
-    var randomAvatar;
-    
-    pickRandomNameAndCheck();
     pickRandomAvatarAndCheck();
     
-    function pickRandomNameAndCheck() {
-        var randomIndex = Math.floor(Math.random() * playerNames.length);
-        
-        for(var i=0; i<players.length; i++) {
-            if(players[i].name == playerNames[randomIndex]){
-                pickRandomNameAndCheck();
-                return;
-            }
-        }
-        randomName = playerNames[randomIndex];
-        if(flag1RandomFound) {
-            addMyselfToPlayers(randomName, randomAvatar);
-        }
-        flag1RandomFound = true;
-    }
-
     function pickRandomAvatarAndCheck() {
         var randomIndex = Math.floor(Math.random() * playerAvatars.length);
         for(var i=0; i<players.length; i++) {
@@ -154,17 +139,12 @@ function setMyPlayer() {
                 return;
             }
         }
-        randomAvatar = playerAvatars[randomIndex];
-        if(flag1RandomFound) {
-            addMyselfToPlayers(randomName, randomAvatar);
-        }
-        flag1RandomFound = true;
+        addMyselfToPlayers(playerAvatars[randomIndex]);
     }
-    // });
 }
 
-function addMyselfToPlayers(randName, randAvatar) {
-    me = {name:randName, avatar:randAvatar, score:0, rank:players.length}
+function addMyselfToPlayers(randAvatar) {
+    me = {name:randAvatar.name, avatar:randAvatar.src, score:0, rank:players.length}
     players.push(me);
     socketSend({event: 'newPlayer', body:{
         name: me.name,
@@ -263,21 +243,32 @@ socket.on('message', function(message){
                 avatar: me.avatar,
                 score: me.score,
                 rank: me.rank,
-                requestId: event.body.requestId
+                requestId: message.body.requestId
             }});
         }
     break;
     case "playerInfo":
         if(requestingPlayers) {
-            if(requestId == event.body.requestId){
+            if(requestId == message.body.requestId){
                 var player = {
                     name: message.body.name,
                     avatar: message.body.avatar,
                     score: message.body.score,
                     rank: message.body.rank
                 }
-                addPlayerToList(player);
+                addRequestedPlayerToList(player);
             }
+        }
+    break;
+    case "newPlayer":
+        if(message.body.name != me.name){
+            var player = {
+                name: message.body.name,
+                avatar: message.body.avatar,
+                score: message.body.score,
+                rank: message.body.rank
+            }
+            addNewPlayerToList(player);
         }
     break;
     case "said":
