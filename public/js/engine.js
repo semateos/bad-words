@@ -103,13 +103,11 @@ function performWordAction(word) {
     if(word){
 
         switch(word.action.type) {
-
             case "gifBomb":
                 sendGifBomb(word.action.gifName, "all");
                 break;
-
             case "addPoints":
-                setScore("add", me.name, word.action.numPoints);
+                updateScore(me.name, parseInt(me.score + word.action.numPoints));
                 break;
         }
     }
@@ -131,11 +129,15 @@ socket.on('message', function(message){
         console.log('player list update', message.players);
         updatePlayers(message.players);
     break;
+    case 'playerPosition':
+        console.log('player position update', message.players);
+        updatePlayers(message.players);
+    break;
     case "said":
         console.log("word received thru socket: " + message.body);
     break;
     case "playerScoreUpdate":
-        setScore(message.body.method, message.body.playerName, message.body.score);
+        updateScore(message.body.playerName, message.body.score);
     break;
     case "removeCommand":
         removeCommand(message.command); // would be a commandName
@@ -161,7 +163,7 @@ function addMyself(myPlayer) {
     $meInScoreboard.css({
         backgroundColor: "rgba(0, 255, 0, .4)"
     });
-    updateScoreboardRankings(true);
+    updateScoreboardRankings();
 }
 
 function updatePlayers(playerDbList) {
@@ -202,14 +204,7 @@ function removeElementFromScoreboard(player) {
     
 }
 
-function updateScore(playerName, score) {
-    
-}
-
-function updateScoreboardRankings(forceAnimation) {
-    if(typeof forceAnimation == "undefined") {
-        forceAnimation = false;
-    }
+function updateScoreboardRankings() {
     var flagAnimateUpdateScoreboard = false;
     var playersInScoreboard = [];
     var numPlayersInScoreboard = $("#scoreboard").children().length;
@@ -243,19 +238,12 @@ function updateScoreboardRankings(forceAnimation) {
 
 // game functions
 
-function setScore(method, playerName, num) {
-    var scoreChange = 0;
-    if(method == "add"){
-        scoreChange += num;
-    } else if(method == "subtract"){
-        scoreChange -= num;
-    }
+function updateScore(playerName, newScore) {
     if(playerName == me.name) {
+        me.score = newScore;
         socketSend({event: "playerScoreUpdate", body: {playerName: me.name, score: newScore}});
     }
     var $playerScoreElem = getPlayerScoreElementInScoreboardByName(playerName);
-    var oldScore = parseInt($playerScoreElem.html());
-    var newScore = (oldScore += scoreChange);
     $playerScoreElem.html(newScore);
     updateScoreboardRankings();
 }
@@ -278,7 +266,7 @@ function sendGifBomb(gifName, target) {
     
     socketSend({event: 'gifBomb', body: {target: target, gifName: gifName}});
     console.log("sent Gif Bomb: " + gifName + " to " + target + "!!!");
-    setScore("add", me.name, 3);
+    updateScore("add", me.name, me.score+3);
     return;
     
     for(var i=0; i<collectedGifBombs.length; i++) {
@@ -303,7 +291,6 @@ function receiveGifBomb(gifName, fromPlayer) {
     // ui display Gif fullscreen
     // also display who sent it
 }
-
 
 // util functions
 
