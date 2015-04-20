@@ -3,22 +3,7 @@ var socket = io();
 
 var words = [
     
-    /*{word:"supercalifragilisticexpialidocious", action:{type:"gifBomb", gifName:"bananaMan"}},
-    {word:"penis", action:{type:"gifBomb", gifName:"bananaMan"}},
-    {word:"nipple", action:{type:"gifBomb", gifName:"stimpyButton"}},
-    {word:"shocker", action:{type:"gifBomb", gifName:"omgCat"}},
-    {word:"dildo", action:{type:"gifBomb", gifName:"rickRoll"}},
-    {word:"socket", action:{type:"gifBomb", gifName:"llama"}},
-    {word:"pickle", action:{type:"gifBomb", gifName:"sloMoFace"}},
-    {word:"stank", action:{type:"gifBomb", gifName:"recursiveSmiley"}},
-    {word:"twat", action:{type:"gifBomb", gifName:"freeFoodDog"}},
-    {word:"pussy", action:{type:"gifBomb", gifName:"keyboardCat"}},
-    {word:"snatch", action:{type:"gifBomb", gifName:"ronaldSmack"}},
-    {word:"skank", action:{type:"gifBomb", gifName:"trippyMan"}},
-    {word:"thong", action:{type:"gifBomb", gifName:"freeFoodDog"}},
-    {word:"silly", action:{type:"gifBomb", gifName:"trippyMan"}},
-    {word:"spank", action:{type:"gifBomb", gifName:"stimpyButton"}},
-    */
+
     
     // teleport
     
@@ -38,7 +23,7 @@ var words = [
     {word:"umbrella", action:{type:"gifBomb", gifName:"umbrella"}},
     
     // point words
-    {word:"supercalifragilisticexpialidocious", action:{type:"addPoints", numPoints: 34}},
+    //{word:"supercalifragilisticexpialidocious", action:{type:"addPoints", numPoints: 34}},
     {word:"caboodle", action:{type:"addPoints", numPoints: 8}},
     {word:"banana", action:{type:"addPoints", numPoints: 6}},
     {word:"epiglottis", action:{type:"addPoints", numPoints: 10}},
@@ -124,7 +109,7 @@ function start_voice() {
         var word = getWord(term);
         
         if(word && word == "teleport") {
-            
+
             teleport();
         }
         
