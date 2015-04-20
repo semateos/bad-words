@@ -28,21 +28,22 @@ plugins = plugins.concat([
 
                 var db = server.plugins['dogwater'];
 
-                db.cats.findOne({connected:false})
-                .then(function(cat) {
+                db.players.findOne({connected:false})
+                .then(function(player) {
                 
-                    cat.socket = socket.id;
-                    cat.connected = true;
-                    cat.save();
-
-                    console.log('player connected as', cat);
-
-                    db.cats.find({connected:true})
-                    .then(function(cats){
-
-                        console.log('players', cats);
-                        socket.broadcast.emit('message', {event: 'players', players: cats});
-                        socket.emit('message', {event: 'players', players: cats});
+                    player.socket = socket.id;
+                    player.connected = true;
+                    player.save();
+                    
+                    console.log('player connected as', player);
+                    socket.emit('message', {event: 'newPlayer', player: player});
+                    
+                    db.players
+                        .find({connected:true})
+                    .then(function(players){
+                        console.log('players', players);
+                        socket.broadcast.emit('message', {event: 'players', players: players});
+                        socket.emit('message', {event: 'players', players: players});
                     });
 
                 });
@@ -56,21 +57,21 @@ plugins = plugins.concat([
                     
                     var db = server.plugins['dogwater'];
 
-                    db.cats.findOne({socket: socket.id})
-                    .then(function(cat) {
+                    db.players.findOne({socket: socket.id})
+                    .then(function(player) {
                     
-                        cat.socket = '';
-                        cat.connected = false;
-                        cat.save();
+                        player.socket = '';
+                        player.connected = false;
+                        player.save();
+                        
+                        console.log('player disconnected', player);
 
-                        console.log('player disconnected', cat);
+                        db.players.find({connected:true})
+                        .then(function(players){
 
-                        db.cats.find({connected:true})
-                        .then(function(cats){
-
-                            console.log('players', cats);
-                            socket.broadcast.emit('message', {event: 'players', players: cats});
-                            socket.emit('message', {event: 'players', players: cats});
+                            console.log('players', players);
+                            socket.broadcast.emit('message', {event: 'players', players: players});
+                            socket.emit('message', {event: 'players', players: players});
                         });
                     });
 
@@ -80,7 +81,7 @@ plugins = plugins.concat([
             },
 
             messageHandler: function (socket) {
-
+                
                 return function (message) {
 
                     var db = server.plugins['dogwater'];
@@ -91,13 +92,13 @@ plugins = plugins.concat([
 
                             case 'playerScoreUpdate':
 
-                                db.cats.findOne({socket: socket.id})
-                                .then(function(cat) {
+                                db.players.findOne({socket: socket.id})
+                                .then(function(player) {
                                 
-                                    cat.score = message.body.score;
-                                    cat.save();
+                                    player.score = message.body.score;
+                                    player.save();
 
-                                    console.log('cat score', cat);
+                                    console.log('player score', player);
                                 });
 
                                 console.log('score update', message);

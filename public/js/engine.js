@@ -1,24 +1,6 @@
 
 var socket = io();
 
-var playerAvatars = [
-    {name:"Alien", src:"images/avatar-alien.png"},
-    {name:"Ballmer", src:"images/avatar-ballmer.png"},
-    {name:"Beiber", src:"images/avatar-beiber.png"},
-    {name:"Betty", src:"images/avatar-betty.png"},
-    {name:"Busey", src:"images/avatar-busey.png"},
-    {name:"Georgio", src:"images/avatar-georgio.png"},
-    {name:"Hillary", src:"images/avatar-hillary.png"},
-    {name:"Kramer", src:"images/avatar-kramer.png"},
-    {name:"Michael", src:"images/avatar-michael.png"},
-    {name:"Mimi", src:"images/avatar-mimi.png"},
-    {name:"Oh My", src:"images/avatar-ohmy.png"},
-    {name:"Old Man", src:"images/avatar-oldman.png"},
-    {name:"Oprah", src:"images/avatar-oprah.png"},
-    {name:"Peter", src:"images/avatar-peter.png"},
-    {name:"Trump", src:"images/avatar-trump.png"}
-];
-
 var words = [
     {word:"supercalifragilisticexpialidocious", action:{type:"gifBomb", gifName:"bananaMan"}},
     {word:"penis", action:{type:"gifBomb", gifName:"bananaMan"}},
@@ -51,8 +33,6 @@ var gifBombs = [
     {name:"trippyMan", src:"images/trippy-man.gif"}
 ];
 
-var players = [];
-
 var colors = [
     {name:"pink", hex:""},
     {name:"green", hex:""},
@@ -63,104 +43,10 @@ var colors = [
 
 var crosshairsTarget = "";
 var collectedGifBombs = [];
-var currentPlayerTarget = null;
-var playerScore = 0;
-var requestingPlayers;
-var playerId;
-var playerRequestTimeout;
+var isNewPlayer = true;
 var me;
 
-init();
-
-function init() {
-    start_voice();
-    /*
-    name: request.name,
-                score: request.score,
-                rank: request.rank,
-                scoreboardAvatar: request.scoreboardAvatar,
-                worldAvatar: request.worldAvatar
-    */
-    
-    /*
-    $.ajax({
-        url: "/api/players/addPlayer",
-        method: "POST",
-        data: {
-            name: "Bill",
-            score: 10,
-            rank: 1,
-            avatar: "images/avatar-peter.png",
-        },
-        success: function(data){
-            alert(JSON.stringify(data));
-        }
-    });
-    */
-    getPlayersInGame();
-}
-
-function getPlayersInGame() {
-    requestingPlayers = true;
-    playerId = Math.random();
-    socketSend({event: 'playerRequest', body:{playerId: playerId}});
-    playerRequestTimeout = setTimeout(function(){
-        requestingPlayers = false;
-        setMyPlayer();
-    }, 2000);
-}
-
-function addNewPlayerToList(player) {
-    players.push(player);
-    addPlayerToScoreboard(player);
-    updateScoreboard();
-}
-
-function addRequestedPlayerToList(player) {
-    players.push(player);
-    addPlayerToScoreboard(player);
-    
-    clearTimeout(playerRequestTimeout);
-    playerRequestTimeout = setTimeout(function(){
-        requestingPlayers = false;
-        setMyPlayer();
-    }, 800);
-    updateScoreboard();
-}
-
-function setMyPlayer() {
-    pickRandomAvatarAndCheck();
-    
-    function pickRandomAvatarAndCheck() {
-        var randomIndex = Math.floor(Math.random() * playerAvatars.length);
-        for(var i=0; i<players.length; i++) {
-            if(players[i].name == playerAvatars[randomIndex]){
-                pickRandomNameAndCheck();
-                return;
-            }
-        }
-        addMyselfToPlayers(playerAvatars[randomIndex]);
-    }
-}
-
-function addMyselfToPlayers(randAvatar) {
-    me = {name:randAvatar.name, avatar:randAvatar.src, score:0, rank:players.length}
-    players.push(me);
-    socketSend({event: 'addNewPlayer', body:{
-        name: me.name,
-        avatar: me.avatar,
-        score: me.score,
-        rank: me.rank
-    }});
-    
-    addPlayerToScoreboard(me);
-    
-    var $meInScoreboard = getPlayerInScoreboardByName(me.name);
-    $meInScoreboard.css({
-        backgroundColor: "rgba(0, 255, 0, .4)"
-    });
-    updateScoreboard(true);
-}
+start_voice();
 
 function start_voice() {
     // voice recognition
@@ -179,10 +65,6 @@ function start_voice() {
             performWordAction(word);
         }
         
-        ////////////////////////////
-        /////// For testing ////////
-        // performWordAction(word);
-        ////////////////////////
         socketSend({event: 'said', body: term});
     }
     
@@ -230,78 +112,34 @@ function performWordAction(word) {
 
 // multiplayer socket.io shit
 
-function getPlayersFromDb() {
-    
-}
-
-function addMeToDb() {
-    
-}
-
 function socketSend(message){
     socket.emit('message', message);
 }
 
 socket.on('message', function(message){
     switch(message.event) {
-
+    case 'newPlayer':
+        console.log('welcome '+ message.player.name + '!', message.player);
+        addMyself(message.player);
+    break;
     case 'players':
-
         console.log('player list update', message.players);
-        break;
-
-    case "playerRequest":
-        if(!requestingPlayers) {
-            socketSend({event: 'playerInfo', body:{
-                name: me.name,
-                avatar: me.avatar,
-                score: me.score,
-                rank: me.rank,
-                playerId: message.body.playerId
-            }});
-        }
-    break;
-    case "playerInfo":
-        if(requestingPlayers) {
-            if(playerId == message.body.playerId){
-                var player = {
-                    name: message.body.name,
-                    avatar: message.body.avatar,
-                    score: message.body.score,
-                    rank: message.body.rank
-                }
-                addRequestedPlayerToList(player);
-            }
-        }
-    break;
-    case "addNewPlayer":
-        if(message.body.name != me.name){
-            var player = {
-                name: message.body.name,
-                avatar: message.body.avatar,
-                score: message.body.score,
-                rank: message.body.rank
-            }
-            addNewPlayerToList(player);
-        }
+        updatePlayers(message.players);
     break;
     case "said":
         console.log("word received thru socket: " + message.body);
-    break;
-    case "setPlayer":
-        me = getPlayerByName(message.body);
     break;
     case "playerScoreUpdate":
         setScore(message.body.method, message.body.playerName, message.body.score);
     break;
     case "removeCommand":
-        removeCommand(message.body); // would be a commandName
+        removeCommand(message.command); // would be a commandName
     break;
     case "gifBomb":
         if(message.body.target == "all") {
             receiveGifBomb(message.body.gifName, message.body.fromPlayer); // would be a gifName
         } else {
-            if (me == getPlayerByName(message.body.target)){
+            if (me.name == message.body.target){
                 receiveGifBomb(message.body.gifName, message.body.fromPlayer); // would be a gifName
             }
         }
@@ -311,80 +149,110 @@ socket.on('message', function(message){
 
 // ui functions
 
-function setScore(method, playerName, num) {
-    var player = getPlayerByName(playerName);
-    if(method == "add"){
-        player.score += num
-    } else if(method == "subtract"){
-        player.score -= num
+function addMyself(myPlayer) {
+    me = myPlayer;
+    addPlayerToScoreboard(me);
+    var $meInScoreboard = getPlayerInScoreboardByName(me.name);
+    $meInScoreboard.css({
+        backgroundColor: "rgba(0, 255, 0, .4)"
+    });
+    updateScoreboardRankings(true);
+}
+
+function updatePlayers(playerDbList) {
+    for(var i=0; i<playerDbList.length; i++) {
+        if(!getPlayerInScoreboardByName(playerDbList[i].name)) {
+            addPlayerToScoreboard(playerDbList[i]);
+        }
     }
     
-    if(player == me) {
-        socketSend({event: "playerScoreUpdate", body: {method: method, playerName: me.name, score: me.score}});
+    var numScoreboardChildren = $("#scoreboard").children().length;
+    if(numScoreboardChildren > playerDbList.length) {
+        for(var i=0; i<numScoreboardChildren; i++) {
+            var scoreboardName = $("#scoreboard").children().eq(i).find(".scoreboardPlayerName").html();
+            var nameInDb = false;
+            for(var j=0; j<playerDbList.length; j++) {
+                if(playerDbList[j].name == scoreboardName){
+                    nameInDb = true;
+                }
+            }
+            if(!nameInDb) {
+                $("#scoreboard").children().eq(i).remove();
+            }
+        }
     }
-    
-    updateScoreboard();
+    updateScoreboardRankings();
 }
 
 function addPlayerToScoreboard(player) {
-    $("#scoreboard").append("<div class='scoreboardPlayer'>"
+    $("#scoreboard").append("<div data-rank='"+ player.rank +"' class='scoreboardPlayer'>"
                             +"<img class='scoreboardPlayerAvatar' src='"+ player.avatar +"'/>"
                             +"<div class='scoreboardPlayerName'>"+ player.name +"</div>"
-                            +"<div class='scoreboardPlayerScore'>0</div>"
+                            +"<div class='scoreboardPlayerScore'>"+ player.score +"</div>"
                             +"</div>"
                            )
 }
 
-function updateScoreboard(appStart) {
-    for(var i=0; i<players.length; i++) {
-        var $playerScoreInScoreboard = getPlayerScoreElementInScoreboardByName(players[i].name);
-        if($playerScoreInScoreboard){
-            if(parseInt($playerScoreInScoreboard.html()) != players[i].score){
-                $playerScoreInScoreboard.html(players[i].score);
-            }
-        }
+function removeElementFromScoreboard(player) {
+    
+}
+
+function updateScore(playerName, score) {
+    
+}
+
+function updateScoreboardRankings(forceAnimation) {
+    if(typeof forceAnimation == "undefined") {
+        forceAnimation = false;
+    }
+    var flagAnimateUpdateScoreboard = false;
+    var playersInScoreboard = [];
+    var numPlayersInScoreboard = $("#scoreboard").children().length;
+    
+    for(var i=0; i<numPlayersInScoreboard; i++) {
+        var elem = $("#scoreboard").children().eq(i);
+        playersInScoreboard.push({
+            element: elem,
+            score: $("#scoreboard").children().eq(i).find(".scoreboardPlayerScore").html(),
+            rank: elem.attr("data-rank")
+        });
     }
     
-    var flagAnimateUpdateScoreboard = false;
-    var playerRankingsBeforeSorting = players.slice(0);
-    
-    players.sort(function(player1, player2) {
+    playersInScoreboard.sort(function(player1, player2) {
         // Ascending: first score less than the previous
         return player2.score - player1.score;
     });
     
-    for(var i=0; i<players.length; i++) {
-        players[i].rank = (i+1);
+    for(var i=0; i<playersInScoreboard.length; i++) {
+        playersInScoreboard[i].element.attr("data-rank", (i+1));
     }
     
-    if(playerRankingsBeforeSorting != players) {
-        flagAnimateUpdateScoreboard = true;
-    }
-    
-    // alert(JSON.stringify(players));
-    
-    if(typeof appStart == "undefined"){
-        appStart = false;
-    }
-    if(flagAnimateUpdateScoreboard || appStart) {
-        for(var i=0; i<players.length; i++) {
-            ///// alert($("#scoreboard").children().eq(i));
-            var singlePlayerHeight = $("#scoreboard").children().eq(0).height() + 10; // +10 for padding
-            getPlayerInScoreboardByName(players[i].name).animate({
-                top: (singlePlayerHeight * i - 1)
-            }, 500);
-        }
+    for(var i=0; i<playersInScoreboard.length; i++) {
+        ///// alert($("#scoreboard").children().eq(i));
+        var singlePlayerHeight = $("#scoreboard").children().eq(0).height() + 10; // +10 for padding
+        playersInScoreboard[i].element.animate({
+            top: (singlePlayerHeight * i - 1)
+        }, 500);
     }
 }
 
 // game functions
 
-function registerPlayers() {
-    // numPlayers gets set from reading how many in the socket
-    /*var numPlayers = 3;
-    for(var i=0; i<numPlayers; i++) {
-        
-    }*/
+function setScore(method, playerName, num) {
+    var scoreChange = 0;
+    if(method == "add"){
+        scoreChange += num;
+    } else if(method == "subtract"){
+        scoreChange -= num;
+    }
+    if(playerName == me.name) {
+        socketSend({event: "playerScoreUpdate", body: {playerName: me.name, score: newScore}});
+    }
+    var $playerScoreElem = getPlayerScoreElementInScoreboardByName(playerName);
+    var oldScore = parseInt($playerScoreElem.html());
+    var newScore = (oldScore += scoreChange);
+    $playerScoreElem.html(newScore);
+    updateScoreboardRankings();
 }
 
 function targetInCrosshairs(target) {
@@ -431,9 +299,8 @@ function receiveGifBomb(gifName, fromPlayer) {
     // also display who sent it
 }
 
-///////////////////////
+
 // util functions
-///////////////////////
 
 function getGifBombByName(gifName) {
     for(var i=0; i<gifBombs.length; i++) {
@@ -460,14 +327,6 @@ function getPlayerInScoreboardByName(playerName) {
         }
     }
     return 0;
-}
-
-function getPlayerByName(playerName) {
-    for(var i=0; i<players.length; i++) {
-        if(players[i].name == playerName){
-            return players[i];
-        }
-    }
 }
 
 function removeCommand(commandWord) {

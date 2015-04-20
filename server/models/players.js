@@ -6,14 +6,10 @@ module.exports = {
     connection: 'diskDb',
     
     attributes: {
-        name: {
-            type: 'string',
-            primaryKey: true,
-            unique: true   
-        },
+        name: 'string',
         score: 'int',
-        rank: 'int',
-        avatar: 'string'
+        avatar: 'string',
+        rank: 'int'
     },
     
 }
