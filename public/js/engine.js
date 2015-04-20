@@ -89,6 +89,7 @@ var colors = [
 var crosshairsTarget = "";
 var collectedGifBombs = [];
 var isNewPlayer = true;
+var currentPlayersDbList = [];
 var me;
 
 start_voice();
@@ -181,8 +182,9 @@ socket.on('message', function(message){
         addMyself(message.player);
     break;
     case 'players':
+        currentPlayersDbList = message.players;
         console.log('player list update', message.players);
-        updatePlayers(message.players);
+        updatePlayers(currentPlayersDbList);
     break;
     case 'playerPositionUpdate':
         console.log('player position update', message.player);
@@ -230,21 +232,21 @@ function updatePlayerPosition(player) {
     // updatePlayerAvatarPosition(player);
 }
 
-function updatePlayers(playerDbList) {
-    for(var i=0; i<playerDbList.length; i++) {
-        if(!getPlayerInScoreboardByName(playerDbList[i].name)) {
-            addPlayerToGame(playerDbList[i]);
+function updatePlayers(playersDbList) {
+    for(var i=0; i<playersDbList.length; i++) {
+        if(!getPlayerInScoreboardByName(playersDbList[i].name)) {
+            addPlayerToGame(playersDbList[i]);
         }
     }
     
     var numScoreboardChildren = $("#scoreboard").children().length;
-    if(numScoreboardChildren > playerDbList.length) {
+    if(numScoreboardChildren > playersDbList.length) {
         for(var i=0; i<numScoreboardChildren; i++) {
             var $scoreboardElement = $("#scoreboard").children().eq(i);
             var scoreboardName = $scoreboardElement.find(".scoreboardPlayerName").html();
             var nameInDb = false;
-            for(var j=0; j<playerDbList.length; j++) {
-                if(playerDbList[j].name == scoreboardName){
+            for(var j=0; j<playersDbList.length; j++) {
+                if(playersDbList[j].name == scoreboardName){
                     nameInDb = true;
                 }
             }
@@ -269,7 +271,7 @@ function addPlayerToGame(player) {
 
 function removePlayerFromGame(playerName, $scoreboardElement) {
     $scoreboardElement.remove();
-    // removePlayerAvatarFromCanvas(playerName);
+    // removePlayerAvatarFromCanvas(getPlayerInDbListByName(playerName));
 }
 
 function updateScoreboardRankings() {
@@ -360,6 +362,15 @@ function receiveGifBomb(gifName, fromPlayer) {
 }
 
 // util functions
+
+function getPlayerInDbListByName(playerName) {
+    for(var i=0; i<currentPlayersDbList.length; i++) {
+        if(playerName == currentPlayersDbList[i].name) {
+            return currentPlayersDbList[i];
+        }
+    }
+    return 0;
+}
 
 function getGifBombByName(gifName) {
     for(var i=0; i<gifBombs.length; i++) {

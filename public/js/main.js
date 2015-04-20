@@ -6,6 +6,7 @@ var camera, scene, renderer;
 var effect, controls;
 var element, container;
 var cube, time, text, text_geo;
+var avatars = [];
 
 var particleSystem, particles, boxes,
 particleSystemHeight = 500,
@@ -173,7 +174,7 @@ function init() {
     box.visible = false;
     box.word = word;
     box.update(); 
-  
+    
     group.add( text );
     group.add( box );
 
@@ -183,7 +184,7 @@ function init() {
     group.position.x = Math.random() * 500 - 250;
     group.position.y = Math.random() * 500 - 250;
     group.position.z = Math.random() * 500 - 250;
-
+    
     particles[i] = group;
     boxes[i] = box;
 
@@ -192,11 +193,55 @@ function init() {
     scene.add( group );
 
   }
+    
+    addPlayerAvatarToCanvas();
 
+}
+
+function getAvatarFromParticlesByName(avatarName) {
+    
 }
 
 function addPlayerAvatarToCanvas(player) {
     // grab player.position
+    if(typeof player == "undefined"){
+        player = {};
+        player.name = "Alien";
+    }
+    
+    
+    var group = new THREE.Object3D();//create an empty container
+    
+    
+    
+    var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
+        map:THREE.ImageUtils.loadTexture('images/avatar-alien.png', {}, function(){
+            buildAfterImageLoaded();
+        }),
+        transparent: true
+    });
+    img.map.minFilter = THREE.NearestFilter;
+    
+    function buildAfterImageLoaded() {
+        var avatar = new THREE.Mesh(new THREE.PlaneBufferGeometry(100, 100), img);
+        var box = new THREE.BoundingBoxHelper( avatar, 0x00ff00 );
+        
+        group.add( avatar );
+        group.add( box );
+
+        group.box = box;
+        group.avatar = avatar;
+        group.name = player.name;
+
+        group.position.x = Math.random() * 200 - 100;
+        group.position.y = Math.random() * 200 - 100;
+        group.position.z = Math.random() * 200 - 100;
+
+        particles[particles.length] = group;
+        boxes[boxes.length] = box;
+        avatars.push(group);
+        scene.add(group);
+    }
 }
 
 function removePlayerAvatarFromCanvas(playerName) {
@@ -241,10 +286,15 @@ function render(dt) {
 
 
   // simple billboard method
-  //text.quaternion.copy( camera.quaternion );
+  // text.quaternion.copy( camera.quaternion );
+  for(var i=0; i< avatars.length; i++) {
+        avatars[i].quaternion.copy( camera.quaternion );
+        avatars[i].position.x -= 0.02;
+        avatars[i].position.y -= 0.02;
+        avatars[i].position.z -= 0.02;
+  }
 
-
-  for(var i = 0; i < words.length; i++){
+  for(i = 0; i < words.length; i++){
 
     particles[i].quaternion.copy( camera.quaternion );
 
