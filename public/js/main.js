@@ -170,7 +170,9 @@ function init() {
     var text_geo = new THREE.TextGeometry(word.word, {size: 20, height: 1, font: 'gentilis'});
     var text = new THREE.Mesh( text_geo, new THREE.MeshLambertMaterial({color: 0x00ff00}) );
 
-    var bbox = new THREE.BoundingBoxHelper( text, 0x00ff00 ); 
+    var bbox = new THREE.BoundingBoxHelper( text, 0x00ff00 );
+    bbox.visible = false;
+
     bbox.update(); 
 
   
@@ -247,7 +249,7 @@ function render(dt) {
 
       particles[i].box.intersected = false;
 
-      particles[i].box.material.color.set( 0x00ff00 );
+      particles[i].box.object.material.color.set( 0x00ff00 );
     }
 
 
@@ -265,7 +267,7 @@ function render(dt) {
 
     // console.log('intersects', intersects);
 
-    intersects[ i ].object.material.color.set( 0xff0000 );
+    intersects[ i ].object.object.material.color.set( 0xff0000 );
     
     intersects[ i ].object.intersected = 300;
   }
