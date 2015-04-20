@@ -33,6 +33,7 @@ plugins = plugins.concat([
                 
                     player.socket = socket.id;
                     player.connected = true;
+                    player.score = 0;
                     player.save();
                     
                     console.log('player connected as', player);
