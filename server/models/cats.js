@@ -7,7 +7,9 @@ module.exports = {
     
     attributes: {
         name: 'string',
-        clicks: 'int'
+        points: 'int',
+        connected: 'boolean',
+        socket: 'string'
     }
     
 }
