@@ -44,8 +44,8 @@ var words = [
     {word:"epiglottis", action:{type:"addPoints", numPoints: 10}},
     {word:"bumfuzzle", action:{type:"addPoints", numPoints: 9}},
     {word:"collywobbles", action:{type:"addPoints", numPoints: 12}},
-    {word:"Goomba", action:{type:"addPoints", numPoints: 6}},
-    {word:"Bumbershoot", action:{type:"addPoints", numPoints: 11}},
+    {word:"goomba", action:{type:"addPoints", numPoints: 6}},
+    {word:"bumbershoot", action:{type:"addPoints", numPoints: 11}},
     {word:"monkey", action:{type:"addPoints", numPoints: 6}},
     {word:"nincompoop", action:{type:"addPoints", numPoints: 10}},
     {word:"stinkpot", action:{type:"addPoints", numPoints: 8}},
@@ -64,7 +64,7 @@ var words = [
     {word:"pipsqueak", action:{type:"addPoints", numPoints: 9}},
     {word:"shenanigans", action:{type:"addPoints", numPoints: 11}},
     {word:"supercilious", action:{type:"addPoints", numPoints: 12}},
-    {word:"Zamboni", action:{type:"addPoints", numPoints: 7}},
+    {word:"zamboni", action:{type:"addPoints", numPoints: 7}},
     {word:"guacamole", action:{type:"addPoints", numPoints: 9}},
     {word:"dangler", action:{type:"addPoints", numPoints: 7}},
     {word:"snickerdoodle", action:{type:"addPoints", numPoints: 13}},
@@ -76,7 +76,7 @@ var words = [
     {word:"ukulele", action:{type:"addPoints", numPoints: 7}},
     {word:"greasy", action:{type:"addPoints", numPoints: 6}},
     {word:"stanky", action:{type:"addPoints", numPoints: 6}},
-    {word:"Narwhal", action:{type:"addPoints", numPoints: 7}},
+    {word:"narwhal", action:{type:"addPoints", numPoints: 7}},
     {word:"slimy", action:{type:"addPoints", numPoints: 5}},
     {word:"sourpuss", action:{type:"addPoints", numPoints: 8}}
 ];
@@ -118,7 +118,7 @@ function start_voice() {
     // annyang.debug();
     
     var word_matched = function(term) {
-        
+        term = term.toLowerCase();
         console.log('I said:', term);
         
         var word = getWord(term);
@@ -363,7 +363,7 @@ function sendGifBomb(gifName, target) {
     
     socketSend({event: 'gifBomb', body: {target: target, gifName: gifName}});
     console.log("sent Gif Bomb: " + gifName + " to " + target + "!!!");
-    updateScore("add", me.name, me.score+3);
+    updateScore(me.name, me.score+3);
     return;
     
     for(var i=0; i<collectedGifBombs.length; i++) {
