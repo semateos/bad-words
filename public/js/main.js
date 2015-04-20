@@ -243,14 +243,12 @@ function getAvatarFromParticlesByName(avatarName) {
     }
 }
 
-
 function updatePlayerAvatarPosition(player) {
     var playerAvatar = getAvatarFromParticlesByName(player.name).particle;
     playerAvatar.position.x = player.positionX;
     playerAvatar.position.y = player.positionY;
     playerAvatar.position.z = player.positionZ;
 }
-
 
 function resize() {
   var width = container.offsetWidth;
