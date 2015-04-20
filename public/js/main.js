@@ -170,16 +170,15 @@ function init() {
     var text_geo = new THREE.TextGeometry(word.word, {size: 20, height: 1, font: 'gentilis'});
     var text = new THREE.Mesh( text_geo, new THREE.MeshLambertMaterial({color: 0x00ff00}) );
 
-    var bbox = new THREE.BoundingBoxHelper( text, 0x00ff00 );
-    bbox.visible = false;
-
-    bbox.update(); 
-
+    var box = new THREE.BoundingBoxHelper( text, 0x00ff00 );
+    box.visible = false;
+    box.word = word;
+    box.update(); 
   
     group.add( text );
-    group.add( bbox );
+    group.add( box );
 
-    group.box = bbox;
+    group.box = box;
     group.text = text;
 
     group.position.x = Math.random() * 500 - 250;
@@ -187,7 +186,7 @@ function init() {
     group.position.z = Math.random() * 500 - 250;
 
     particles[i] = group;
-    boxes[i] = bbox;
+    boxes[i] = box;
 
     word.particle = particles[i];
 
