@@ -240,7 +240,19 @@ function render(dt) {
     particles[i].position.y -= 0.02;
     particles[i].position.z -= 0.02;
 
-    if(particles[i].box.intersected && particles[i].box.intersected > 0){
+
+    if(particles[i].explode > 0){
+
+      particles[i].explode--;
+
+      particles[i].box.object.material.wireframe = true;
+
+      particles[i].object.scale.set(12,6,1);
+
+      particles[i].object.opacity -= 0.1;
+
+      
+    }else if(particles[i].box.intersected && particles[i].box.intersected > 0){
 
       particles[i].box.intersected--;
 
@@ -250,6 +262,8 @@ function render(dt) {
 
       particles[i].box.object.material.color.set( 0x00ff00 );
     }
+
+
 
 
     

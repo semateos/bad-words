@@ -62,6 +62,11 @@ function start_voice() {
         var word = getWord(term);
         
         if(word && word.particle.box.intersected) {
+
+            word.particle.explode = 300;
+
+            socketSend({event: 'explode', body: term});
+
             performWordAction(word);
         }
         
