@@ -343,9 +343,11 @@ function render(dt) {
 
           scene.remove(particles[i]);
 
+          boxes.splice(particles[i].box.i, 1);
+
           delete(particles[i]);
 
-          delete(bozes[particles[i].box.i]);
+          
         }
         
       }else if(particles[i].box.intersected && particles[i].box.intersected > 0){
