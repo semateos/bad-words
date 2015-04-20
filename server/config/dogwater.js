@@ -11,8 +11,23 @@ module.exports = {
 				items: [
 				    {
 						id: 1,
+						name: 'Ren',
+						points: 0,
+						connected: false
+				    },
+
+				    {
+						id: 2,
 						name: 'Stimpy',
-						clicks: 0
+						points: 0,
+						connected: false
+				    },
+
+				    {
+						id: 3,
+						name: 'Sven',
+						points: 0,
+						connected: false
 				    }
 				]
 		    }

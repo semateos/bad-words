@@ -244,6 +244,12 @@ function socketSend(message){
 
 socket.on('message', function(message){
     switch(message.event) {
+
+    case 'players':
+
+        console.log('player list update', message.players);
+        break;
+
     case "playerRequest":
         if(!requestingPlayers) {
             socketSend({event: 'playerInfo', body:{

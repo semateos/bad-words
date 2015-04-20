@@ -24,6 +24,61 @@ plugins = plugins.concat([
     {
         plugin: require('hapi-socket'),
         options: {
+            connectHandler: function (socket) {
+
+                var db = server.plugins['dogwater'];
+
+                db.cats.findOne({connected:false})
+                .then(function(cat) {
+                
+                    cat.socket = socket.id;
+                    cat.connected = true;
+                    cat.save();
+
+                    console.log('player connected as', cat);
+
+                    db.cats.find({connected:true})
+                    .then(function(cats){
+
+                        console.log('players', cats);
+                        socket.broadcast.emit('message', {event: 'players', players: cats});
+                        socket.emit('message', {event: 'players', players: cats});
+                    });
+
+                });
+
+                //console.log('connection test', socket.id);
+            },
+
+            disconnectHandler: function (socket) {
+
+                return function () {
+                    
+                    var db = server.plugins['dogwater'];
+
+                    db.cats.findOne({socket: socket.id})
+                    .then(function(cat) {
+                    
+                        cat.socket = '';
+                        cat.connected = false;
+                        cat.save();
+
+                        console.log('player disconnected', cat);
+
+                        db.cats.find({connected:true})
+                        .then(function(cats){
+
+                            console.log('players', cats);
+                            socket.broadcast.emit('message', {event: 'players', players: cats});
+                            socket.emit('message', {event: 'players', players: cats});
+                        });
+                    });
+
+                };
+
+                //console.log('connection test', socket.id);
+            },
+
             messageHandler: function (socket) {
 
                 return function (message) {
