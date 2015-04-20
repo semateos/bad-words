@@ -66,7 +66,7 @@ var collectedGifBombs = [];
 var currentPlayerTarget = null;
 var playerScore = 0;
 var requestingPlayers;
-var requestId;
+var playerId;
 var playerRequestTimeout;
 var me;
 
@@ -102,8 +102,8 @@ function init() {
 
 function getPlayersInGame() {
     requestingPlayers = true;
-    requestId = Math.random();
-    socketSend({event: 'playerRequest', body:{requestId: requestId}});
+    playerId = Math.random();
+    socketSend({event: 'playerRequest', body:{playerId: playerId}});
     playerRequestTimeout = setTimeout(function(){
         requestingPlayers = false;
         setMyPlayer();
@@ -243,13 +243,13 @@ socket.on('message', function(message){
                 avatar: me.avatar,
                 score: me.score,
                 rank: me.rank,
-                requestId: message.body.requestId
+                playerId: message.body.playerId
             }});
         }
     break;
     case "playerInfo":
         if(requestingPlayers) {
-            if(requestId == message.body.requestId){
+            if(playerId == message.body.playerId){
                 var player = {
                     name: message.body.name,
                     avatar: message.body.avatar,
