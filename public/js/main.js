@@ -157,7 +157,6 @@ function init() {
   var light = new THREE.HemisphereLight(0xffff00, 0x000000, 1);
   scene.add(light);
 
-
   particles = [];
   boxes = [];
 
@@ -201,7 +200,7 @@ function addPlayerAvatarToCanvas(player) {
     // broadcast socketSend({event: "playerPositionUpdate", body: {playerName: me.name, position: newPosition}});
 }
 
-function removePlayerAvatarFromCanvas(player) {
+function removePlayerAvatarFromCanvas(playerName) {
     
 }
 

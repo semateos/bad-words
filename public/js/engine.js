@@ -46,7 +46,7 @@ var words = [
     {word:"pipsqueak", action:{type:"addPoints", numPoints: 5}},
     {word:"shenanigans", action:{type:"addPoints", numPoints: 5}},
     {word:"supercilious", action:{type:"addPoints", numPoints: 5}},
-    {word:"zamboni", action:{type:"addPoints", numPoints: 5}},
+    {word:"Zamboni", action:{type:"addPoints", numPoints: 5}},
     {word:"schmutz", action:{type:"addPoints", numPoints: 5}},
     {word:"guacamole", action:{type:"addPoints", numPoints: 5}},
     {word:"dangler", action:{type:"addPoints", numPoints: 5}},
@@ -241,7 +241,7 @@ function updatePlayers(playerDbList) {
                 }
             }
             if(!nameInDb) {
-                removePlayerFromGame(player, $scoreboardElement);
+                removePlayerFromGame(scoreboardName, $scoreboardElement);
             }
         }
     }
@@ -256,12 +256,12 @@ function addPlayerToGame(player) {
                             +"<div class='scoreboardPlayerScore'>"+ player.score +"</div>"
                             +"</div>"
                            )
-    addPlayerAvatarToCanvas(player);
+    // addPlayerAvatarToCanvas(player);
 }
 
-function removePlayerFromGame(player, $scoreboardElement) {
-    $("#scoreboard").children().eq(i).remove();
-    removePlayerAvatarFromCanvas(player);
+function removePlayerFromGame(playerName, $scoreboardElement) {
+    $scoreboardElement.remove();
+    // removePlayerAvatarFromCanvas(playerName);
 }
 
 function updateScoreboardRankings() {
