@@ -264,14 +264,12 @@ function removePlayerAvatarFromCanvas(playerName) {
 }
 
 function getAvatarFromParticlesByName(avatarName) {
-    for(var i=0; i<particles.length; i++) {
-        console.log("NAME: "+particles[i].name);
-        if(avatarName == particles[i].name) {
-            return {particle: particles[i], index:i}
+    for(var i=0; i<avatars.length; i++) {
+        if(avatarName == avatars[i].name) {
+            return {particle: avatars[i], index:i}
         }
     }
 }
-
 
 function updatePlayerAvatarPosition(player) {
     var playerAvatar = getAvatarFromParticlesByName(player.name).particle;
@@ -279,7 +277,6 @@ function updatePlayerAvatarPosition(player) {
     playerAvatar.position.y = player.positionY;
     playerAvatar.position.z = player.positionZ;
 }
-
 
 function resize() {
   var width = container.offsetWidth;

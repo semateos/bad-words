@@ -108,7 +108,7 @@ function start_voice() {
         
         var word = getWord(term);
         
-        if(word && word == "teleport") {
+        if(term == "teleport") {
 
             teleport();
         }
@@ -172,10 +172,12 @@ function performWordAction(word) {
 }
 
 function teleport() {
+    console.log("teleporting!");
     me.positionX = Math.random() * 200 - 100;
     me.positionY = Math.random() * 200 - 100;
     me.positionZ = Math.random() * 200 - 100;
     socketSend({event: "playerPositionUpdate", player: me});
+    updatePlayerPosition(me);
 }
 
 // multiplayer socket.io shit
@@ -235,7 +237,7 @@ function addMyself(myPlayer) {
 
 function updatePlayerPosition(player) {
     console.log("player position update: " + player);
-    if(player.name != me.name) {
+    if(player.name == me.name) {
         camera.position.set(player.positionX, player.positionY, player.positionZ);
     } else {
         updatePlayerAvatarPosition(player);
