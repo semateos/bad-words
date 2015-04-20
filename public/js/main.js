@@ -345,7 +345,7 @@ function render(dt) {
 
   for ( var i = 0; i < intersects.length; i++ ) {
 
-    // console.log('intersects', intersects);
+    console.log('intersects', intersects);
     if(!intersects[ i ].object.explode){
 
       //intersects[ i ].object.explode = 300;
