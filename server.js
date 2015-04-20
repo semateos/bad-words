@@ -82,6 +82,31 @@ plugins = plugins.concat([
             messageHandler: function (socket) {
 
                 return function (message) {
+
+                    var db = server.plugins['dogwater'];
+                    
+                    if(message.event){
+
+                        switch(message.event){
+
+                            case 'playerScoreUpdate':
+
+                                db.cats.findOne({socket: socket.id})
+                                .then(function(cat) {
+                                
+                                    cat.score = message.body.score;
+                                    cat.save();
+
+                                    console.log('cat score', cat);
+                                });
+
+                                console.log('score update', message);
+                                break;
+
+                        }
+
+                    }
+
                     console.log("Message sent!", message);
                     socket.broadcast.emit('message', message);
                 };
