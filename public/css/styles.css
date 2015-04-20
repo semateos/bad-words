@@ -152,9 +152,24 @@ video{
     z-index: 101;
 }
 
-#gifBomb {
+.titleScreen {
     min-width: 100%;
     min-height: 100%;
+    background-color: #000;
+    position: absolute;
+    z-index: 9999;
+}
+
+.titleScreenImg {
+    min-height: 100%;
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translate(-50%, 0);
+        -ms-transform: translate(-50%, 0);
+            transform: translate(-50%, 0);
+}
+
+#gifBomb {
     min-width: 100%;
     min-height: 100%;
     background-color: #000;

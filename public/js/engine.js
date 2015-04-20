@@ -91,9 +91,33 @@ var crosshairsTarget = "";
 var collectedGifBombs = [];
 var isNewPlayer = true;
 var currentPlayersDbList = [];
+var titleScreenIsShowing;
 var me;
 
 start_voice();
+// setTimeout(function(){
+    init();
+// showTitleScreenVR();
+// }, 200);
+
+function init() {
+    titleScreenIsShowing = true;
+    //if(VR) {
+    //    showTitleScreenVR();
+    //}
+}
+
+function showTitleScreenVR() {
+    var $titleScreenLeft = $(".titleScreen");
+    var $titleScreenRight = $titleScreenLeft.clone();
+    $("video .left").append($titleScreenLeft);
+    $("video .right").append($titleScreenRight);
+}
+
+function hideTitleScreen() {
+    titleScreenIsShowing = false;
+    $(".titleScreen").fadeOut();
+}
 
 function start_voice() {
     // voice recognition
@@ -111,6 +135,11 @@ function start_voice() {
         if(term == "teleport") {
 
             teleport();
+        }
+        
+        if(term == "banana" && titleScreenIsShowing) {
+            hideTitleScreen();
+            return;
         }
         
         if(word && word.particle.box.intersected) {
@@ -140,14 +169,6 @@ function start_voice() {
 
     // Add word commands to annyang
     annyang.addCommands(commands);
-}
-
-function showTitleScreen() {
-    
-}
-
-function showTitleScreenVR() {
-    
 }
 
 function getWord(term) {
