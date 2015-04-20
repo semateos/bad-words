@@ -138,8 +138,8 @@ socket.on('message', function(message){
         updatePlayers(message.players);
     break;
     case 'playerPositionUpdate':
-        console.log('player position update', message.players);
-        updatePlayers(message.players);
+        console.log('player position update', message.player);
+        updatePlayerPosition(message.player);
     break;
     case "said":
         console.log("word received thru socket: " + message.body);
@@ -172,6 +172,10 @@ function addMyself(myPlayer) {
         backgroundColor: "rgba(0, 255, 0, .4)"
     });
     updateScoreboardRankings();
+}
+
+function updatePlayerPosition(player) {
+    updatePlayerAvatarPosition(player);
 }
 
 function updatePlayers(playerDbList) {

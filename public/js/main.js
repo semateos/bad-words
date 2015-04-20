@@ -198,10 +198,14 @@ function init() {
 
 function addPlayerAvatarToCanvas(player) {
     // grab player.position
-    // broadcast 
+    // broadcast socketSend({event: "playerPositionUpdate", body: {playerName: me.name, position: newPosition}});
 }
 
 function removePlayerAvatarFromCanvas(player) {
+    
+}
+
+function updatePlayerAvatarPosition(player) {
     
 }
 
