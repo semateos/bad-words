@@ -2,7 +2,7 @@
 var socket = io();
 
 var words = [
-    {word:"teleport", action:{type:"teleport"}},
+    
     /*{word:"supercalifragilisticexpialidocious", action:{type:"gifBomb", gifName:"bananaMan"}},
     {word:"penis", action:{type:"gifBomb", gifName:"bananaMan"}},
     {word:"nipple", action:{type:"gifBomb", gifName:"stimpyButton"}},
@@ -19,6 +19,10 @@ var words = [
     {word:"silly", action:{type:"gifBomb", gifName:"trippyMan"}},
     {word:"spank", action:{type:"gifBomb", gifName:"stimpyButton"}},
     */
+    
+    // teleport
+    
+    {word:"teleport"}, // gets caught in word_matched
     
     // bombs
     
@@ -119,6 +123,10 @@ function start_voice() {
         
         var word = getWord(term);
         
+        if(word && word == "teleport") {
+            teleport();
+        }
+        
         if(word && word.particle.box.intersected) {
 
             word.particle.explode = 300;
@@ -148,6 +156,14 @@ function start_voice() {
     annyang.addCommands(commands);
 }
 
+function showTitleScreen() {
+    
+}
+
+function showTitleScreenVR() {
+    
+}
+
 function getWord(term) {
     for(var i=0; i<words.length; i++) {
         if(term == words[i].word){
@@ -157,9 +173,7 @@ function getWord(term) {
 }
 
 function performWordAction(word) {
-
     if(word){
-
         switch(word.action.type) {
             case "gifBomb":
                 sendGifBomb(word.action.gifName, "all");
@@ -167,17 +181,14 @@ function performWordAction(word) {
             case "addPoints":
                 updateScore(me.name, parseInt(me.score + word.action.numPoints));
             break;
-            case "teleport":
-                teleport();
-            break;
         }
     }
 }
 
 function teleport() {
-    me.positionX = Math.random() * 500 - 250;
-    me.positionY = Math.random() * 500 - 250;
-    me.positionZ = Math.random() * 500 - 250;
+    me.positionX = Math.random() * 200 - 100;
+    me.positionY = Math.random() * 200 - 100;
+    me.positionZ = Math.random() * 200 - 100;
     socketSend({event: "playerPositionUpdate", player: me});
 }
 
@@ -239,9 +250,10 @@ function addMyself(myPlayer) {
 function updatePlayerPosition(player) {
     console.log("player position update: " + player);
     if(player.name != me.name) {
-        
+        camera.position.set(player.positionX, player.positionY, player.positionZ);
+    } else {
+        updatePlayerAvatarPosition(player);
     }
-    // updatePlayerAvatarPosition(player);
 }
 
 function updatePlayers(playersDbList) {
@@ -278,12 +290,14 @@ function addPlayerToGame(player) {
                             +"<div class='scoreboardPlayerScore'>"+ player.score +"</div>"
                             +"</div>"
                            )
-    // addPlayerAvatarToCanvas(player);
+    if(player.name != me.name) {
+        addPlayerAvatarToCanvas(player);
+    }
 }
 
 function removePlayerFromGame(playerName, $scoreboardElement) {
     $scoreboardElement.remove();
-    // removePlayerAvatarFromCanvas(getPlayerInDbListByName(playerName));
+    removePlayerAvatarFromCanvas(playerName);
 }
 
 function updateScoreboardRankings() {

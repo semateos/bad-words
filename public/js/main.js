@@ -193,29 +193,13 @@ function init() {
     scene.add( group );
 
   }
-    
-    addPlayerAvatarToCanvas();
-
-}
-
-function getAvatarFromParticlesByName(avatarName) {
-    
 }
 
 function addPlayerAvatarToCanvas(player) {
     // grab player.position
-    if(typeof player == "undefined"){
-        player = {};
-        player.name = "Alien";
-    }
-    
-    
     var group = new THREE.Object3D();//create an empty container
-    
-    
-    
     var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
-        map:THREE.ImageUtils.loadTexture('images/avatar-alien.png', {}, function(){
+        map:THREE.ImageUtils.loadTexture(player.avatar, {}, function(){
             buildAfterImageLoaded();
         }),
         transparent: true
@@ -233,9 +217,9 @@ function addPlayerAvatarToCanvas(player) {
         group.avatar = avatar;
         group.name = player.name;
 
-        group.position.x = Math.random() * 200 - 100;
-        group.position.y = Math.random() * 200 - 100;
-        group.position.z = Math.random() * 200 - 100;
+        group.position.x = player.positionX;
+        group.position.y = player.positionY;
+        group.position.z = player.positionZ;
 
         particles[particles.length] = group;
         boxes[boxes.length] = box;
@@ -245,11 +229,26 @@ function addPlayerAvatarToCanvas(player) {
 }
 
 function removePlayerAvatarFromCanvas(playerName) {
-    
+    var avatar = getAvatarFromParticlesByName(playerName);
+    scene.remove(avatar.particle);
+    particles.splice(avatar.index, 1);
 }
 
+function getAvatarFromParticlesByName(avatarName) {
+    for(var i=0; i<particles.length; i++) {
+        console.log("NAME: "+particles[i].name);
+        if(avatarName == particles[i].name) {
+            return {particle: particles[i], index:i}
+        }
+    }
+}
+
+
 function updatePlayerAvatarPosition(player) {
-    
+    var playerAvatar = getAvatarFromParticlesByName(player.name).particle;
+    playerAvatar.position.x = player.positionX;
+    playerAvatar.position.y = player.positionY;
+    playerAvatar.position.z = player.positionZ;
 }
 
 
@@ -345,7 +344,7 @@ function render(dt) {
 
   for ( var i = 0; i < intersects.length; i++ ) {
 
-    console.log('intersects', intersects);
+    // console.log('intersects', intersects);
     if(!intersects[ i ].object.explode){
 
       //intersects[ i ].object.explode = 300;
