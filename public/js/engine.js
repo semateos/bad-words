@@ -343,6 +343,10 @@ function updateScoreboardRankings() {
 // game functions
 
 function updateScore(playerName, newScore) {
+    if(newScore >= 100) {
+        alert("Game Over, " + playerName + " wins!!!");
+        return;
+    }
     if(playerName == me.name) {
         me.score = newScore;
         socketSend({event: "playerScoreUpdate", body: {playerName: me.name, score: newScore}});
