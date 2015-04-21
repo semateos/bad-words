@@ -99,6 +99,7 @@ start_voice();
     init();
 // showTitleScreenVR();
 // }, 200);
+hideTitleScreen();
 
 function init() {
     titleScreenIsShowing = true;
@@ -353,6 +354,11 @@ function updateScoreboardRankings() {
 // game functions
 
 function updateScore(playerName, newScore) {
+    if(newScore >= 50) {
+        alert("Game Over, " + playerName + " wins!!!");
+        startNewGame();
+        return;
+    }
     if(playerName == me.name) {
         me.score = newScore;
         socketSend({event: "playerScoreUpdate", body: {playerName: me.name, score: newScore}});
@@ -360,6 +366,10 @@ function updateScore(playerName, newScore) {
     var $playerScoreElem = getPlayerScoreElementInScoreboardByName(playerName);
     $playerScoreElem.html(newScore);
     updateScoreboardRankings();
+}
+
+function startNewGame() {
+    
 }
 
 function targetInCrosshairs(target) {
@@ -398,9 +408,16 @@ function receiveGifBomb(gifName, fromPlayer) {
     var gifBomb = getGifBombByName(gifName);
     document.getElementById("gifBomb").style.display = "block";
     document.getElementById("gifBomb").setAttribute("src", gifBomb.src);
+    $("#gifBombText").css({
+        display: "block"
+    });
+    $("#gifBombText").html("You just got Gif bombed by \n" + fromPlayer + "!!!");
     setTimeout(function(){
         document.getElementById("gifBomb").setAttribute("src", "");
         document.getElementById("gifBomb").style.display = "none";
+        $("#gifBombText").css({
+        display: "none"
+    });
     }, 9000);
     // ui display Gif fullscreen
     // also display who sent it
