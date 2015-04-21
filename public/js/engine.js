@@ -135,6 +135,8 @@ function start_voice() {
         if(term == "teleport") {
 
             teleport();
+
+            //return;
         }
         
         if(term == "banana" && titleScreenIsShowing) {
@@ -184,9 +186,12 @@ function performWordAction(word) {
         switch(word.action.type) {
             case "gifBomb":
                 sendGifBomb(word.action.gifName, "all");
+
             break;
             case "addPoints":
+
                 updateScore(me.name, parseInt(me.score + word.action.numPoints));
+
             break;
         }
     }
