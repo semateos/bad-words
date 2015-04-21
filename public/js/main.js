@@ -195,17 +195,23 @@ function addWordToCloud(word, vector){
   group.box = box;
   group.text = text;
    
-  group.position.x = Math.random() * 500 - 250;
-  group.position.y = Math.random() * 500 - 250;
-  group.position.z = Math.random() * 500 - 250;
+  group.position.x = Math.random() * 450 - 225;
+  group.position.y = Math.random() * 450 - 225;
+  group.position.z = Math.random() * 450 - 225;
   
   if(vector){
 
     group.vector = vector;
 
   }else{
-
-    group.vector = new THREE.Vector3( (Math.random() - 1)/10, (Math.random() - 1)/10, (Math.random() - 1)/10);
+      function getRandomScalar() {
+          if(Math.random() > 0.5){
+              return (Math.random() - 1)/10;
+          } else {
+              return Math.random()/10;
+          }
+      }
+    group.vector = new THREE.Vector3( getRandomScalar(), getRandomScalar(), getRandomScalar());
   }
 
   var i = particles.length;
@@ -353,8 +359,42 @@ function render(dt) {
     if(particles[i]){
 
       particles[i].quaternion.copy( camera.quaternion );
-
-      particles[i].position.add(particles[i].vector);
+        var pVector = particles[i].vector;
+        var pPosition = particles[i].position;
+        
+        if(pPosition.x > 225) {
+            console.log("reverse X for " + particles[i].box.word.word);
+            pPosition.x = 224;
+            pVector.setX(pVector.x * -1);
+        }
+        if(pPosition.y > 225) {
+            console.log("reverse Y for " + particles[i].box.word.word);
+            pPosition.y = 224;
+            pVector.setY(pVector.y * -1);
+        }
+        if(pPosition.z > 225) {
+            console.log("reverse Z for " + particles[i].box.word.word);
+            pPosition.z = 224;
+            pVector.setZ(pVector.z * -1);
+        }
+        
+        if(pPosition.x < -225) {
+            console.log("reverse X for " + particles[i].box.word.word);
+            pPosition.x = -224;
+            pVector.setX(pVector.x * -1);
+        }
+        if(pPosition.y < -225) {
+            console.log("reverse Y for " + particles[i].box.word.word);
+            pPosition.y = -224;
+            pVector.setY(pVector.y * -1);
+        }
+        if(pPosition.z < -225) {
+            console.log("reverse Z for " + particles[i].box.word.word);
+            pPosition.z = -224;
+            pVector.setZ(pVector.z * -1);
+        }
+        
+      pPosition.add(pVector);
 
       if(particles[i].explode > 0){
 
@@ -375,9 +415,6 @@ function render(dt) {
           boxes.splice(particles[i].box.i, 1);
 
           delete(particles[i]);
-
-
-          
         }
         
       }else if(particles[i].box.intersected && particles[i].box.intersected > 0){

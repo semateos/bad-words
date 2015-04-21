@@ -183,6 +183,7 @@ video{
 }
 
 #gifBombText {
+    text-align: center;
     color: #ff0000;
     font-size: 40pt;
     position: absolute;
