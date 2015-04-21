@@ -99,7 +99,6 @@ start_voice();
     init();
 // showTitleScreenVR();
 // }, 200);
-hideTitleScreen();
 
 function init() {
     titleScreenIsShowing = true;
@@ -132,7 +131,6 @@ function start_voice() {
         console.log('I said:', term);
         
         var word = getWord(term);
-        
         if(term == "teleport") {
 
             teleport();
@@ -144,6 +142,7 @@ function start_voice() {
             hideTitleScreen();
             return;
         }
+        
         if(word){
             if(word.particle){
                 if(word.particle.box.intersected) {
