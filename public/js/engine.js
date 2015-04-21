@@ -345,6 +345,7 @@ function updateScoreboardRankings() {
 function updateScore(playerName, newScore) {
     if(newScore >= 100) {
         alert("Game Over, " + playerName + " wins!!!");
+        startNewGame();
         return;
     }
     if(playerName == me.name) {
@@ -354,6 +355,10 @@ function updateScore(playerName, newScore) {
     var $playerScoreElem = getPlayerScoreElementInScoreboardByName(playerName);
     $playerScoreElem.html(newScore);
     updateScoreboardRankings();
+}
+
+function startNewGame() {
+    
 }
 
 function targetInCrosshairs(target) {
