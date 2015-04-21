@@ -31,7 +31,7 @@ function toggleVR(){
     VR = false;
 
     camera.position.set(0, 0, 0);
-
+      
     controls = new THREE.OrbitControls(camera, element);
     controls.rotateUp(Math.PI / 4);
     controls.target.set(

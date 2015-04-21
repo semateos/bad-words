@@ -148,9 +148,9 @@ function start_voice() {
             hideTitleScreen();
             return;
         }
-        
-        if(word && word.particle.box.intersected) {
 
+        if(word && word.particle && word.particle.box.intersected){
+           
             word.particle.explode = 300;
 
             socketSend({event: 'explode', body: term});
@@ -166,6 +166,7 @@ function start_voice() {
             socketSend({event: 'addWord', body: new_word.word});
 
         }
+        
 
         socketSend({event: 'said', body: term});
     }
@@ -410,7 +411,7 @@ function addGifBombToArsenal(gifName) {
 function sendGifBomb(gifName, target) {
     var gifBomb = getGifBombByName(gifName);
     
-    socketSend({event: 'gifBomb', body: {target: target, gifName: gifName}});
+    socketSend({event: 'gifBomb', body: {target: target, gifName: gifName, fromPlayer: me.name}});
     console.log("sent Gif Bomb: " + gifName + " to " + target + "!!!");
     updateScore(me.name, me.score+3);
     return;
