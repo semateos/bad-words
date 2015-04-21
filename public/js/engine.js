@@ -111,9 +111,11 @@ function start_voice() {
         if(term == "teleport") {
 
             teleport();
+
+            //return;
         }
         
-        if(word && word.particle.box.intersected) {
+        if(word && word.particle && word.particle.box.intersected) {
 
             word.particle.explode = 300;
 
@@ -163,9 +165,12 @@ function performWordAction(word) {
         switch(word.action.type) {
             case "gifBomb":
                 sendGifBomb(word.action.gifName, "all");
+
             break;
             case "addPoints":
+
                 updateScore(me.name, parseInt(me.score + word.action.numPoints));
+
             break;
         }
     }

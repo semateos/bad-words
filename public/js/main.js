@@ -223,18 +223,25 @@ function getAvatarFromParticlesByName(avatarName) {
 
 function addPlayerAvatarToCanvas(player) {
     
+    console.log('adding player to canvas', player);
+
+    var test = THREE.ImageUtils.loadTexture(player.avatar, {}, buildAfterImageLoaded);
 
     // grab player.position
-    var group = new THREE.Object3D();//create an empty container
-    var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
-        map:THREE.ImageUtils.loadTexture(player.avatar, {}, function(){
-            buildAfterImageLoaded();
-        }),
-        transparent: true
-    });
-    img.map.minFilter = THREE.NearestFilter;
     
-    function buildAfterImageLoaded() {
+    
+    function buildAfterImageLoaded(texture) {
+
+        var group = new THREE.Object3D();//create an empty container
+        var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
+            map:texture,
+            transparent: true
+        });
+
+        img.map.minFilter = THREE.NearestFilter;
+
+        console.log('build after load', img, event);
+
         var avatar = new THREE.Mesh(new THREE.PlaneBufferGeometry(100, 100), img);
         var box = new THREE.BoundingBoxHelper( avatar, 0x00ff00 );
         
@@ -252,27 +259,33 @@ function addPlayerAvatarToCanvas(player) {
         box.i = boxes.length;
         boxes[box.i] = box;
 
+        group.i = avatars.length;
+
         avatars.push(group);
         scene.add(group);
     }
 }
 
 function removePlayerAvatarFromCanvas(playerName) {
-    var avatar = getAvatarFromParticlesByName(playerName);
-    scene.remove(avatar.particle);
-    particles.splice(avatar.index, 1);
+    var avatar = getAvatarByName(playerName);
+    
+    scene.remove(avatar);
+    
+    boxes.splice(avatar.box.i, 1);
+    avatars.splice(avatar.i, 1);
+    //particles.splice(avatar.index, 1);
 }
 
-function getAvatarFromParticlesByName(avatarName) {
+function getAvatarByName(avatarName) {
     for(var i=0; i<avatars.length; i++) {
         if(avatarName == avatars[i].name) {
-            return {particle: avatars[i], index:i}
+            return avatars[i];
         }
     }
 }
 
 function updatePlayerAvatarPosition(player) {
-    var playerAvatar = getAvatarFromParticlesByName(player.name).particle;
+    var playerAvatar = getAvatarByName(player.name);
     playerAvatar.position.x = player.positionX;
     playerAvatar.position.y = player.positionY;
     playerAvatar.position.z = player.positionZ;
