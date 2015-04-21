@@ -136,7 +136,7 @@ function start_voice() {
 
             teleport();
 
-            //return;
+            //return;test
         }
         
         if(term == "banana" && titleScreenIsShowing) {
@@ -151,8 +151,13 @@ function start_voice() {
             socketSend({event: 'explode', body: term});
 
             performWordAction(word);
+
+            var new_word = words[Math.floor(Math.random()*words.length)];
+
+            addWordToCloud(new_word);
+
         }
-        
+
         socketSend({event: 'said', body: term});
     }
     
