@@ -163,7 +163,7 @@ function init() {
 
   for(var i = 0; i < 20; i++){
 
-    var word = words[Math.floor(Math.random() * words.length)];
+    var word = getRandomNewWord();
 
     addWordToCloud(word);
   
@@ -173,7 +173,11 @@ function init() {
 
 }
 
+
+
 function addWordToCloud(word, vector){
+
+  console.log('word added', word.word);
 
   var group = new THREE.Object3D();//create an empty container
 
@@ -225,15 +229,15 @@ function addPlayerAvatarToCanvas(player) {
     
     console.log('adding player to canvas', player);
 
-    var test = THREE.ImageUtils.loadTexture(player.avatar, {}, buildAfterImageLoaded);
+    var test = THREE.ImageUtils.loadTexture(player.avatar, {}, buildAvatarAfterImageLoaded);
 
     // grab player.position
     
     
-    function buildAfterImageLoaded(texture) {
+    function buildAvatarAfterImageLoaded(texture) {
 
-        var group = new THREE.Object3D();//create an empty container
-        var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
+        var group = new THREE.Object3D(); //create an empty container
+        var img = new THREE.MeshBasicMaterial({
             map:texture,
             transparent: true
         });
@@ -330,6 +334,18 @@ function render(dt) {
         //avatars[i].position.x -= 0.02;
         //avatars[i].position.y -= 0.02;
         //avatars[i].position.z -= 0.02;
+      if(avatars[i].box.intersected && avatars[i].box.intersected > 0){
+
+        // avatars[i].avatar.color.set( 0xff0000 );
+        avatars[i].box.object.material.color.set( 0xff0000 );
+        avatars[i].box.intersected--;
+
+      }else{
+
+        avatars[i].box.intersected = false;
+
+        avatars[i].box.object.material.color.set( 0xffffff );
+      }
   }
 
   for(i = 0; i < particles.length; i++){
@@ -359,6 +375,7 @@ function render(dt) {
           boxes.splice(particles[i].box.i, 1);
 
           delete(particles[i]);
+
 
           
         }

@@ -93,6 +93,7 @@ var isNewPlayer = true;
 var currentPlayersDbList = [];
 var titleScreenIsShowing;
 var me;
+var currentWords = {};
 
 start_voice();
 // setTimeout(function(){
@@ -132,31 +133,39 @@ function start_voice() {
         console.log('I said:', term);
         
         var word = getWord(term);
+        console.log('found', word);
+
         if(term == "teleport") {
 
             teleport();
 
-            //return;
+            //return;test
         }
         
         if(term == "banana" && titleScreenIsShowing) {
             hideTitleScreen();
             return;
         }
-        
-        if(word){
-            if(word.particle){
-                if(word.particle.box.intersected) {
 
-                    word.particle.explode = 300;
+        if(word && word.particle && word.particle.box.intersected){
+           
+            word.particle.explode = 300;
 
-                    socketSend({event: 'explode', body: term});
+            socketSend({event: 'explode', body: term});
 
-                    performWordAction(word);
-                }
-            }
+            performWordAction(word);
+
+            delete(currentWords[term]);
+
+            var new_word = getRandomNewWord();
+
+            addWordToCloud(new_word);
+
+            socketSend({event: 'addWord', body: new_word.word});
+
         }
         
+
         socketSend({event: 'said', body: term});
     }
     
@@ -175,6 +184,20 @@ function start_voice() {
 
     // Add word commands to annyang
     annyang.addCommands(commands);
+}
+
+function getRandomNewWord(){
+
+    var word = words[Math.floor(Math.random()*words.length)];
+
+    while(currentWords[word.word]){
+
+        word = words[Math.floor(Math.random()*words.length)];
+    }
+
+    currentWords[word.word] = word;
+
+    return word;
 }
 
 function getWord(term) {
