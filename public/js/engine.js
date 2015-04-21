@@ -99,6 +99,7 @@ start_voice();
     init();
 // showTitleScreenVR();
 // }, 200);
+hideTitleScreen();
 
 function init() {
     titleScreenIsShowing = true;
@@ -202,9 +203,9 @@ function performWordAction(word) {
 
 function teleport() {
     console.log("teleporting!");
-    me.positionX = Math.random() * 200 - 100;
-    me.positionY = Math.random() * 200 - 100;
-    me.positionZ = Math.random() * 200 - 100;
+    me.positionX = Math.random() * 300 - 150;
+    me.positionY = Math.random() * 300 - 150;
+    me.positionZ = Math.random() * 300 - 150;
     socketSend({event: "playerPositionUpdate", player: me});
     updatePlayerPosition(me);
 }
