@@ -163,7 +163,7 @@ function init() {
 
   for(var i = 0; i < 20; i++){
 
-    var word = words[Math.floor(Math.random() * words.length)];
+    var word = getRandomNewWord();
 
     addWordToCloud(word);
   
@@ -173,7 +173,11 @@ function init() {
 
 }
 
+
+
 function addWordToCloud(word, vector){
+
+  console.log('word added', word.word);
 
   var group = new THREE.Object3D();//create an empty container
 
@@ -359,6 +363,7 @@ function render(dt) {
           boxes.splice(particles[i].box.i, 1);
 
           delete(particles[i]);
+
 
           
         }

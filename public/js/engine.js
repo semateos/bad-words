@@ -93,6 +93,7 @@ var isNewPlayer = true;
 var currentPlayersDbList = [];
 var titleScreenIsShowing;
 var me;
+var currentWords = {};
 
 start_voice();
 // setTimeout(function(){
@@ -132,6 +133,9 @@ function start_voice() {
         console.log('I said:', term);
         
         var word = getWord(term);
+
+        console.log('found', word);
+
         
         if(term == "teleport") {
 
@@ -153,9 +157,13 @@ function start_voice() {
 
             performWordAction(word);
 
-            var new_word = words[Math.floor(Math.random()*words.length)];
+            delete(currentWords[term]);
+
+            var new_word = getRandomNewWord();
 
             addWordToCloud(new_word);
+
+            socketSend({event: 'addWord', body: new_word.word});
 
         }
 
@@ -177,6 +185,20 @@ function start_voice() {
 
     // Add word commands to annyang
     annyang.addCommands(commands);
+}
+
+function getRandomNewWord(){
+
+    var word = words[Math.floor(Math.random()*words.length)];
+
+    while(currentWords[word.word]){
+
+        word = words[Math.floor(Math.random()*words.length)];
+    }
+
+    currentWords[word.word] = word;
+
+    return word;
 }
 
 function getWord(term) {
