@@ -190,7 +190,7 @@ function addWordToCloud(word, vector){
 
   group.box = box;
   group.text = text;
-  
+   
   group.position.x = Math.random() * 500 - 250;
   group.position.y = Math.random() * 500 - 250;
   group.position.z = Math.random() * 500 - 250;
